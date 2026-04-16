@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Saurabh Srivastava — Architect of Systems & AI</title>
+<meta name="description" content="Senior IT Architect with 16 years building open-source, full-stack, AI-driven and low-code systems. Currently driving AI innovation across enterprise software." />
+<meta name="author" content="Saurabh Srivastava" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Saurabh Srivastava — Architect of Systems & AI" />
+<meta property="og:description" content="16 years architecting AI, open-source, full-stack and low-code systems. Building in public." />
+<meta property="og:type" content="website" />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root {
+  --bg:        #0c0b09;
+  --bg-2:      #131210;
+  --surface:   #1a1814;
+  --line:      #2a261f;
+  --line-soft: #1f1c17;
+  --text:      #f1ede4;
+  --muted:     #a8a092;
+  --dim:       #6f695e;
+  --accent:    #d4a574;
+  --accent-2:  #e8b765;
+  --accent-warm:#c2410c;
+  --max:       1400px;
+  --pad:       clamp(1.25rem, 4vw, 3rem);
+  --serif:     'Fraunces', 'Times New Roman', serif;
+  --sans:      'DM Sans', system-ui, sans-serif;
+  --mono:      'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ============ RESET ============ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; background: none; border: none; color: inherit; cursor: pointer; }
+
+/* ============ BLUEPRINT GRID BACKGROUND ============ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============ NAV ============ */
+nav.topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.25rem var(--pad);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(12, 11, 9, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.brand {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.brand .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.nav-links a {
+  position: relative;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width 0.3s;
+}
+.nav-links a:hover::after { width: 100%; }
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+}
+
+/* ============ LAYOUT ============ */
+section {
+  position: relative;
+  z-index: 2;
+  padding: clamp(5rem, 12vw, 10rem) var(--pad);
+  max-width: var(--max);
+  margin: 0 auto;
+  border-bottom: 1px solid var(--line-soft);
+}
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.section-label::before {
+  content: '';
+  width: 32px; height: 1px;
+  background: var(--accent);
+}
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 8rem;
+  border-bottom: 1px solid var(--line-soft);
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 3rem;
+}
+.hero-meta .label-col {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}
+.hero-meta .info-col {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.hero-meta .info-col span {
+  display: block;
+}
+.hero-meta .info-col span strong {
+  color: var(--text);
+  font-weight: 500;
+}
+@media (max-width: 720px) {
+  .hero-meta { grid-template-columns: 1fr; gap: 0.5rem; }
+}
+
+.hero h1 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(3.5rem, 10vw, 9rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin: 1rem 0 2rem;
+  font-variation-settings: "opsz" 144;
+}
+.hero h1 .ital {
+  font-style: italic;
+  color: var(--accent);
+  font-weight: 400;
+}
+.hero h1 .block {
+  display: block;
+}
+.hero-sub {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--muted);
+  max-width: 780px;
+  line-height: 1.5;
+  margin-bottom: 3rem;
+}
+.hero-sub em {
+  color: var(--text);
+  font-style: italic;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 4rem;
+}
+.btn {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 1rem 1.75rem;
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: -1;
+}
+.btn:hover { color: var(--bg); border-color: var(--accent); }
+.btn:hover::before { transform: translateY(0); }
+.btn.primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+.btn.primary::before { background: var(--text); }
+.btn .arrow { transition: transform 0.3s; }
+.btn:hover .arrow { transform: translateX(4px); }
+
+.scroll-hint {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+.scroll-hint .line {
+  width: 60px; height: 1px;
+  background: var(--dim);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-hint .line::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  animation: scrollLine 2.5s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============ ABOUT ============ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+}
+.stats {
+  display: grid;
+  gap: 2rem;
+}
+.stat {
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+.stat-num {
+  font-family: var(--serif);
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+.about-text {
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.65;
+  color: var(--text);
+  font-weight: 300;
+}
+.about-text p { margin-bottom: 1.5rem; }
+.about-text p:last-child { margin-bottom: 0; }
+.about-text strong {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ============ EXPERTISE ============ */
+.expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.exp-card {
+  padding: 2.5rem 2rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  transition: background 0.3s;
+}
+.exp-card:hover {
+  background: var(--bg-2);
+}
+.exp-card:hover .exp-num {
+  color: var(--accent);
+}
+.exp-num {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--dim);
+  margin-bottom: 1.5rem;
+  transition: color 0.3s;
+}
+.exp-icon {
+  width: 36px; height: 36px;
+  margin-bottom: 1.5rem;
+  color: var(--accent);
+}
+.exp-title {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.01em;
+}
+.exp-desc {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ============ VISION ============ */
+.vision {
+  background: var(--bg-2);
+  margin: 0 calc(-1 * var(--pad));
+  padding-left: var(--pad);
+  padding-right: var(--pad);
+  max-width: none;
+}
+.vision-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+}
+.manifesto {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+.manifesto-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 2rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.manifesto-item:last-child { border-bottom: none; }
+.manifesto-num {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--accent);
+  padding-top: 0.75rem;
+}
+.manifesto-text {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  line-height: 1.45;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.manifesto-text em {
+  color: var(--accent);
+  font-style: italic;
+}
+@media (max-width: 720px) {
+  .manifesto-item { grid-template-columns: 1fr; gap: 0.5rem; }
+}
+
+/* ============ PROJECTS ============ */
+.proj-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+.proj-title {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+.proj-title .ital {
+  font-style: italic;
+  color: var(--accent);
+}
+.proj-meta {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+.proj-meta a {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+}
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+.repo-card {
+  border: 1px solid var(--line);
+  padding: 2rem;
+  background: var(--bg-2);
+  transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.repo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.repo-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+.repo-card:hover::before { width: 100%; }
+.repo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+.repo-name {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+.repo-card:hover .repo-name { color: var(--accent); }
+.repo-arrow {
+  color: var(--dim);
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.repo-card:hover .repo-arrow {
+  color: var(--accent);
+  transform: translate(4px, -4px);
+}
+.repo-desc {
+  font-size: 0.92rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+.repo-foot {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+.repo-foot .lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text);
+}
+.repo-foot .lang-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.repo-foot .stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  font-family: var(--mono);
+  color: var(--muted);
+  grid-column: 1 / -1;
+}
+.loading::after {
+  content: '...';
+  animation: dots 1.5s infinite;
+}
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+
+/* ============ CONTACT ============ */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
+}
+.contact-card {
+  padding: 3rem 2rem;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  transition: all 0.4s;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.contact-card:last-child { border-right: none; }
+.contact-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 0;
+  background: var(--accent);
+  transition: height 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: -1;
+}
+.contact-card:hover { color: var(--bg); }
+.contact-card:hover::before { height: 100%; }
+.contact-platform {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1rem;
+}
+.contact-card:hover .contact-platform { color: var(--bg); opacity: 0.7; }
+.contact-handle {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+.contact-action {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.contact-card:hover .contact-action { color: var(--bg); }
+@media (max-width: 720px) {
+  .contact-card { border-right: none; }
+}
+
+/* ============ FOOTER ============ */
+footer {
+  position: relative;
+  z-index: 2;
+  padding: 2rem var(--pad);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--dim);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  letter-spacing: 0.05em;
+  max-width: var(--max);
+  margin: 0 auto;
+}
+footer a { color: var(--muted); transition: color 0.3s; }
+footer a:hover { color: var(--accent); }
+
+/* ============ REVEAL ANIMATIONS ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* Initial hero load animation */
+.hero .anim {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: heroIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero .anim-1 { animation-delay: 0.2s; }
+.hero .anim-2 { animation-delay: 0.5s; }
+.hero .anim-3 { animation-delay: 0.8s; }
+.hero .anim-4 { animation-delay: 1.1s; }
+.hero .anim-5 { animation-delay: 1.4s; }
+@keyframes heroIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* selection */
+::selection { background: var(--accent); color: var(--bg); }
+</style>
+</head>
+<body>
+
+<!-- ====== NAV ====== -->
+<nav class="topbar">
+  <a href="#top" class="brand">
+    <span class="dot"></span>
+    <span>SAURABH&nbsp;/&nbsp;ARCHITECT</span>
+  </a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#expertise">Domains</a>
+    <a href="#vision">Vision</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Connect</a>
+  </div>
+</nav>
+
+<!-- ====== HERO ====== -->
+<section class="hero" id="top">
+  <div class="hero-meta anim anim-1">
+    <div class="label-col">— Portfolio · 2026</div>
+    <div class="info-col">
+      <span><strong>Role</strong> Senior IT Architect</span>
+      <span><strong>Focus</strong> AI Innovation</span>
+      <span><strong>Status</strong> Building in public</span>
+    </div>
+  </div>
+  <h1>
+    <span class="block anim anim-2">Saurabh</span>
+    <span class="block anim anim-3">Srivastava<span class="ital">.</span></span>
+  </h1>
+  <p class="hero-sub anim anim-4">
+    Sixteen years architecting <em>open-source, full-stack and low-code</em> systems. Currently shaping <em>AI-driven innovation</em> for the enterprise — and shipping every idea worth shipping.
+  </p>
+  <div class="hero-cta anim anim-5">
+    <a class="btn primary" href="#projects">
+      View Projects <span class="arrow">→</span>
+    </a>
+    <a class="btn" href="#vision">
+      Read the Manifesto <span class="arrow">→</span>
+    </a>
+  </div>
+  <div class="scroll-hint anim anim-5">
+    <span class="line"></span>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ====== ABOUT ====== -->
+<section id="about">
+  <div class="section-label reveal">02 — Profile</div>
+  <div class="about-grid">
+    <div class="stats reveal reveal-delay-1">
+      <div class="stat">
+        <div class="stat-num">16<span style="font-size:0.5em;color:var(--muted);">yrs</span></div>
+        <div class="stat-label">Building Software</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Open Source First</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">AI</div>
+        <div class="stat-label">Innovation Lead</div>
+      </div>
+    </div>
+    <div class="about-text reveal reveal-delay-2">
+      <p>I'm a senior architect operating at the intersection of <strong>enterprise systems</strong> and <strong>emerging AI</strong>. My work spans full-stack web, content management, e-commerce, APIs, low-code platforms, and automation — but the through-line is the same: turn complexity into clean, composable, durable architecture.</p>
+      <p>Today I lead AI innovation initiatives across our organization and our software customers, translating the noisy frontier of generative AI into <strong>practical, shippable</strong> business capability.</p>
+      <p>I build in the open. Every PoC, every reference architecture, every weekend experiment — published, documented, and ready for someone else to fork.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== EXPERTISE ====== -->
+<section id="expertise">
+  <div class="section-label reveal">03 — Domains of Practice</div>
+  <div class="expertise-grid">
+    <div class="exp-card reveal">
+      <div class="exp-num">/ 01</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      <h3 class="exp-title">AI Innovation</h3>
+      <p class="exp-desc">Generative AI, agentic systems, RAG architectures, model evaluation, and the org-level frameworks that turn experiments into shipped product.</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-1">
+      <div class="exp-num">/ 02</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <h3 class="exp-title">Solution Architecture</h3>
+      <p class="exp-desc">End-to-end architecture for distributed systems — from domain modelling and API contracts to deployment topology and operational excellence.</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-2">
+      <div class="exp-num">/ 03</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      <h3 class="exp-title">Open Source</h3>
+      <p class="exp-desc">A bias toward open stacks. CMS, headless commerce, SSR frameworks, observability — chosen for transparency, longevity, and community gravity.</p>
+    </div>
+    <div class="exp-card reveal">
+      <div class="exp-num">/ 04</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <h3 class="exp-title">Full-Stack Engineering</h3>
+      <p class="exp-desc">Web applications, REST &amp; GraphQL APIs, content management, e-commerce platforms — front-of-stack to data layer, hands-on where it matters.</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-1">
+      <div class="exp-num">/ 05</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+      <h3 class="exp-title">Low-Code &amp; Power Platform</h3>
+      <p class="exp-desc">Microsoft Power Platform — Power Apps, Power Automate, Dataverse — plus the integration patterns that let citizen and pro developers ship together.</p>
+    </div>
+    <div class="exp-card reveal reveal-delay-2">
+      <div class="exp-num">/ 06</div>
+      <svg class="exp-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 22h20L12 2z"/><path d="M12 8v6"/><path d="M12 18h.01"/></svg>
+      <h3 class="exp-title">Intelligent Automation</h3>
+      <p class="exp-desc">Process intelligence, workflow orchestration, RPA-meets-AI patterns — automation that compounds value rather than just shifting work around.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== VISION / MANIFESTO ====== -->
+<section class="vision" id="vision">
+  <div class="vision-inner">
+    <div class="section-label reveal">04 — Point of View</div>
+    <div class="manifesto">
+      <div class="manifesto-item reveal">
+        <div class="manifesto-num">/ 01</div>
+        <p class="manifesto-text">Architecture is a service to <em>business outcomes</em>, not a monument to engineering taste.</p>
+      </div>
+      <div class="manifesto-item reveal reveal-delay-1">
+        <div class="manifesto-num">/ 02</div>
+        <p class="manifesto-text">AI doesn't replace good design — it <em>raises the floor</em> and demands better systems thinking around it.</p>
+      </div>
+      <div class="manifesto-item reveal reveal-delay-2">
+        <div class="manifesto-num">/ 03</div>
+        <p class="manifesto-text">Open source is the most reliable form of <em>future-proofing</em>. Bet on the community, not the vendor cycle.</p>
+      </div>
+      <div class="manifesto-item reveal reveal-delay-3">
+        <div class="manifesto-num">/ 04</div>
+        <p class="manifesto-text">Low-code and pro-code aren't rivals. The architecture's job is to make them <em>compose without friction</em>.</p>
+      </div>
+      <div class="manifesto-item reveal reveal-delay-4">
+        <div class="manifesto-num">/ 05</div>
+        <p class="manifesto-text">Ship the PoC. <em>Public by default.</em> Quiet expertise compounds slower than visible craft.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PROJECTS ====== -->
+<section id="projects">
+  <div class="section-label reveal">05 — Building in Public</div>
+  <div class="proj-header reveal">
+    <h2 class="proj-title">Open-source <span class="ital">work.</span></h2>
+    <div class="proj-meta">
+      Live from <a href="https://github.com/saurabh-oss" target="_blank" rel="noopener">github.com/saurabh-oss</a> →
+    </div>
+  </div>
+  <div class="projects-grid" id="repos">
+    <div class="loading">Loading repositories</div>
+  </div>
+</section>
+
+<!-- ====== CONTACT ====== -->
+<section id="contact">
+  <div class="section-label reveal">06 — Connect</div>
+  <h2 class="proj-title reveal" style="margin-bottom:1rem;">Let's <span class="ital">build something.</span></h2>
+  <p class="about-text reveal reveal-delay-1" style="max-width:640px;">For collaboration on AI initiatives, architecture reviews, open-source contributions, or just a sharp conversation about systems —</p>
+  <div class="contact-grid">
+    <a class="contact-card reveal" href="https://www.linkedin.com/in/saurabh-tcs/" target="_blank" rel="noopener">
+      <div class="contact-platform">/ LinkedIn</div>
+      <div class="contact-handle">saurabh-tcs</div>
+      <div class="contact-action">Connect →</div>
+    </a>
+    <a class="contact-card reveal reveal-delay-1" href="https://x.com/sauvast" target="_blank" rel="noopener">
+      <div class="contact-platform">/ X / Twitter</div>
+      <div class="contact-handle">@sauvast</div>
+      <div class="contact-action">Follow →</div>
+    </a>
+    <a class="contact-card reveal reveal-delay-2" href="https://github.com/saurabh-oss" target="_blank" rel="noopener">
+      <div class="contact-platform">/ GitHub</div>
+      <div class="contact-handle">saurabh-oss</div>
+      <div class="contact-action">Fork it →</div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div>© <span id="year"></span> Saurabh Srivastava · Built in the open</div>
+  <div>Source: <a href="https://github.com/saurabh-oss/saurabh-oss.github.io" target="_blank" rel="noopener">saurabh-oss.github.io</a></div>
+</footer>
+
+<script>
+/* ============ YEAR ============ */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ============ SCROLL REVEAL ============ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ============ GITHUB REPOS ============ */
+const GH_USER = 'saurabh-oss';
+const reposEl = document.getElementById('repos');
+
+// Language colour map (extend as needed)
+const langColors = {
+  JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
+  HTML: '#e34c26', CSS: '#563d7c', Java: '#b07219', 'C#': '#178600',
+  Shell: '#89e051', Go: '#00ADD8', Ruby: '#701516', PHP: '#4F5D95',
+  Vue: '#41b883', Svelte: '#ff3e00', Rust: '#dea584', Dockerfile: '#384d54'
+};
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+function repoCard(r) {
+  const desc = r.description ? escapeHtml(r.description) : 'No description provided.';
+  const lang = r.language || 'Mixed';
+  const langColor = langColors[r.language] || '#d4a574';
+  return `
+    <a class="repo-card reveal" href="${r.html_url}" target="_blank" rel="noopener">
+      <div class="repo-head">
+        <div class="repo-name">${escapeHtml(r.name)}</div>
+        <svg class="repo-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+        </svg>
+      </div>
+      <p class="repo-desc">${desc}</p>
+      <div class="repo-foot">
+        <span class="lang">
+          <span class="lang-dot" style="background:${langColor}"></span>
+          ${escapeHtml(lang)}
+        </span>
+        <span class="stat-item">★ ${r.stargazers_count}</span>
+        <span class="stat-item">⑂ ${r.forks_count}</span>
+        ${r.fork ? '<span class="stat-item">fork</span>' : ''}
+      </div>
+    </a>`;
+}
+
+async function loadRepos() {
+  try {
+    const res = await fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`);
+    if (!res.ok) throw new Error('GitHub API ' + res.status);
+    const repos = await res.json();
+    if (!repos.length) {
+      reposEl.innerHTML = `<div class="loading" style="animation:none;">No public repos yet — check back soon.</div>`;
+      return;
+    }
+    // Sort: prioritize non-forks, then by stars, then by recent update
+    repos.sort((a, b) => {
+      if (a.fork !== b.fork) return a.fork ? 1 : -1;
+      if (b.stargazers_count !== a.stargazers_count) return b.stargazers_count - a.stargazers_count;
+      return new Date(b.updated_at) - new Date(a.updated_at);
+    });
+    reposEl.innerHTML = repos.map(repoCard).join('');
+    // Re-observe newly inserted reveal nodes
+    reposEl.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  } catch (err) {
+    reposEl.innerHTML = `
+      <div class="loading" style="animation:none;">
+        Couldn't load repos right now. Visit
+        <a style="color:var(--accent);text-decoration:underline;" href="https://github.com/${GH_USER}" target="_blank" rel="noopener">
+          github.com/${GH_USER}
+        </a> directly.
+      </div>`;
+    console.error(err);
+  }
+}
+loadRepos();
+</script>
+</body>
+</html>
