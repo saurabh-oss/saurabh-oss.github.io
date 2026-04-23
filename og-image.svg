@@ -40,14 +40,18 @@
 
   <!-- Pills row -->
   <!-- Pill 1 -->
-  <rect x="100" y="430" width="130" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
-  <text x="165" y="452" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">16 yrs exp</text>
+  <rect x="100" y="415" width="130" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
+  <text x="165" y="437" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">16 yrs exp</text>
   <!-- Pill 2 -->
-  <rect x="246" y="430" width="100" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
-  <text x="296" y="452" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">Open Source</text>
+  <rect x="246" y="415" width="118" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
+  <text x="305" y="437" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">Open Source</text>
   <!-- Pill 3 -->
-  <rect x="362" y="430" width="68" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
-  <text x="396" y="452" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">AI / ML</text>
+  <rect x="380" y="415" width="76" height="34" rx="17" fill="#1a1814" stroke="#2a261f" stroke-width="1.5"/>
+  <text x="418" y="437" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="13" fill="#d4a574" letter-spacing="0.5">AI / ML</text>
+
+  <!-- CTA button -->
+  <rect x="100" y="468" width="200" height="46" rx="23" fill="#d4a574" opacity="0.12" stroke="#d4a574" stroke-width="1.5" stroke-opacity="0.5"/>
+  <text x="200" y="497" text-anchor="middle" font-family="'DM Sans', system-ui, sans-serif" font-size="18" font-weight="500" fill="#d4a574" letter-spacing="0.5">Explore Portfolio →</text>
 
   <!-- Domain bottom-right -->
   <text x="1120" y="570" text-anchor="end" font-family="'JetBrains Mono', 'Courier New', monospace" font-size="18" fill="#6f695e" letter-spacing="1">saurabh-oss.github.io</text>
