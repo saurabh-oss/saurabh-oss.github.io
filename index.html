@@ -632,223 +632,6 @@ section {
 .verdict-hold  { background: rgba(251,191,36,0.10); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
 .verdict-block { background: rgba(239,68,68,0.10);  color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
 
-/* ============ SITES CAROUSEL ============ */
-.sites-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.25rem;
-}
-.sites-head-label {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.c-btns { display: flex; gap: 0.5rem; }
-.c-btn {
-  width: 36px; height: 36px;
-  border: 1px solid var(--line);
-  background: var(--bg-2);
-  color: var(--muted);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-.c-btn:hover { border-color: var(--accent); color: var(--accent); }
-.carousel-track {
-  display: flex;
-  gap: 1.25rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  padding-bottom: 0.5rem;
-  scroll-behavior: smooth;
-  margin-bottom: 3rem;
-}
-.carousel-track::-webkit-scrollbar { display: none; }
-.site-card {
-  flex: 0 0 320px;
-  scroll-snap-align: start;
-  border: 1px solid var(--line);
-  background: var(--bg-2);
-  display: flex;
-  flex-direction: column;
-  transition: all 0.35s cubic-bezier(0.65, 0, 0.35, 1);
-  overflow: hidden;
-  position: relative;
-}
-.site-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 0; height: 2px;
-  background: var(--accent);
-  transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.site-card:hover { border-color: var(--accent); transform: translateY(-4px); }
-.site-card:hover::before { width: 100%; }
-.site-thumb-link {
-  display: block;
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  background: var(--surface);
-}
-.site-thumb {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.5s ease;
-}
-.site-card:hover .site-thumb { transform: scale(1.04); }
-.site-thumb-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(12,11,9,0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s;
-  font-family: var(--mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.site-card:hover .site-thumb-overlay { opacity: 1; }
-.thumb-placeholder {
-  width: 100%; height: 100%;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--dim);
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-}
-.site-card-body {
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-.site-card-name {
-  font-family: var(--mono);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.01em;
-  transition: color 0.2s;
-}
-.site-card:hover .site-card-name { color: var(--accent); }
-.site-card-desc {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.5;
-  flex: 1;
-  margin-bottom: 1rem;
-}
-.site-card-links {
-  display: flex;
-  gap: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--line);
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-}
-.site-link-live { color: var(--accent); transition: opacity 0.2s; }
-.site-link-live:hover { opacity: 0.7; }
-.site-link-gh { color: var(--dim); transition: color 0.2s; }
-.site-link-gh:hover { color: var(--muted); }
-
-/* ============ WRITING ============ */
-.writing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 0;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
-  margin-top: 2rem;
-}
-.article-card {
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  transition: background 0.3s;
-  position: relative;
-  overflow: hidden;
-  text-decoration: none;
-  color: inherit;
-}
-.article-card:hover { background: var(--bg-2); }
-.article-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 2px;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-}
-.article-card:hover::before { transform: scaleX(1); }
-.article-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-.article-platform {
-  color: var(--accent);
-  border: 1px solid rgba(212,165,116,0.3);
-  padding: 0.15rem 0.5rem;
-  letter-spacing: 0.15em;
-}
-.article-title {
-  font-family: var(--serif);
-  font-size: clamp(1.05rem, 1.6vw, 1.3rem);
-  font-weight: 400;
-  color: var(--text);
-  line-height: 1.35;
-  letter-spacing: -0.01em;
-  transition: color 0.2s;
-}
-.article-card:hover .article-title { color: var(--accent); }
-.article-excerpt {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.55;
-  flex: 1;
-}
-.article-read {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--accent);
-  letter-spacing: 0.06em;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-.article-read .arrow { transition: transform 0.2s; }
-.article-card:hover .article-read .arrow { transform: translateX(4px); }
-
 /* ============ PROJECTS ============ */
 .proj-header {
   display: flex;
@@ -1114,7 +897,6 @@ footer a:hover { color: var(--accent); }
     <a href="#expertise">Domains</a>
     <a href="#vision">Vision</a>
     <a href="#projects">Projects</a>
-    <a href="#writing">Writing</a>
     <a href="#contact">Connect</a>
   </div>
 </nav>
@@ -1312,38 +1094,14 @@ footer a:hover { color: var(--accent); }
     </div>
   </div>
 
-  <!-- Live-site carousel: auto-populated for repos with homepage set -->
-  <div id="sites-wrap" style="display:none" class="reveal">
-    <div class="sites-head">
-      <span class="sites-head-label">↗ Live sites</span>
-      <div class="c-btns">
-        <button class="c-btn" id="c-prev" aria-label="Previous">←</button>
-        <button class="c-btn" id="c-next" aria-label="Next">→</button>
-      </div>
-    </div>
-    <div class="carousel-track" id="c-track"></div>
-  </div>
-
   <div class="projects-grid" id="repos">
     <div class="loading">Loading repositories</div>
   </div>
 </section>
 
-<!-- ====== WRITING ====== -->
-<section id="writing" style="display:none">
-  <div class="section-label reveal">06 — Writing</div>
-  <div class="proj-header reveal">
-    <h2 class="proj-title">Ideas in <span class="ital">public.</span></h2>
-    <div class="proj-meta">
-      <a href="https://www.linkedin.com/in/saurabh-tcs/recent-activity/articles/" target="_blank" rel="noopener">All articles on LinkedIn</a> →
-    </div>
-  </div>
-  <div id="articles-grid" class="writing-grid"></div>
-</section>
-
 <!-- ====== CONTACT ====== -->
 <section id="contact">
-  <div class="section-label reveal">07 — Connect</div>
+  <div class="section-label reveal">06 — Connect</div>
   <h2 class="proj-title reveal" style="margin-bottom:1rem;">Let's <span class="ital">build something.</span></h2>
   <p class="about-text reveal reveal-delay-1" style="max-width:640px;">For collaboration on AI initiatives, architecture reviews, open-source contributions, or just a sharp conversation about systems —</p>
   <div class="contact-grid">
@@ -1390,6 +1148,7 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 const GH_USER = 'saurabh-oss';
 const reposEl = document.getElementById('repos');
 
+// Language colour map (extend as needed)
 const langColors = {
   JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
   HTML: '#e34c26', CSS: '#563d7c', Java: '#b07219', 'C#': '#178600',
@@ -1398,10 +1157,11 @@ const langColors = {
 };
 
 function escapeHtml(s) {
-  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  return (s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
 }
 
-/* ---- regular repo card ---- */
 function repoCard(r) {
   const desc = r.description ? escapeHtml(r.description) : 'No description provided.';
   const lang = r.language || 'Mixed';
@@ -1416,48 +1176,17 @@ function repoCard(r) {
       </div>
       <p class="repo-desc">${desc}</p>
       <div class="repo-foot">
-        <span class="lang"><span class="lang-dot" style="background:${langColor}"></span>${escapeHtml(lang)}</span>
+        <span class="lang">
+          <span class="lang-dot" style="background:${langColor}"></span>
+          ${escapeHtml(lang)}
+        </span>
         <span class="stat-item">★ ${r.stargazers_count}</span>
         <span class="stat-item">⑂ ${r.forks_count}</span>
         ${r.fork ? '<span class="stat-item">fork</span>' : ''}
-        ${r.homepage ? `<span class="stat-item" style="color:var(--accent)">↗ live</span>` : ''}
       </div>
     </a>`;
 }
 
-/* ---- live-site carousel card ---- */
-function thumbUrl(url) {
-  return `https://image.thum.io/get/width/640/crop/360/noanimate/${url}`;
-}
-
-function siteCard(r) {
-  const desc = r.description ? escapeHtml(r.description) : '';
-  const home = escapeHtml(r.homepage);
-  return `
-    <div class="site-card">
-      <a class="site-thumb-link" href="${home}" target="_blank" rel="noopener">
-        <img class="site-thumb" src="${thumbUrl(r.homepage)}" alt="${escapeHtml(r.name)} preview" loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-        <div class="thumb-placeholder">${escapeHtml(r.name)}</div>
-        <div class="site-thumb-overlay">Open Site ↗</div>
-      </a>
-      <div class="site-card-body">
-        <div class="site-card-name">${escapeHtml(r.name)}</div>
-        ${desc ? `<p class="site-card-desc">${desc}</p>` : ''}
-        <div class="site-card-links">
-          <a class="site-link-live" href="${home}" target="_blank" rel="noopener">Live Site ↗</a>
-          <a class="site-link-gh" href="${escapeHtml(r.html_url)}" target="_blank" rel="noopener">GitHub →</a>
-        </div>
-      </div>
-    </div>`;
-}
-
-/* ---- carousel nav ---- */
-const cTrack = document.getElementById('c-track');
-document.getElementById('c-prev').addEventListener('click', () => cTrack.scrollBy({ left: -345, behavior: 'smooth' }));
-document.getElementById('c-next').addEventListener('click', () => cTrack.scrollBy({ left:  345, behavior: 'smooth' }));
-
-/* ---- load repos ---- */
 async function loadRepos() {
   try {
     const res = await fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`);
@@ -1467,20 +1196,14 @@ async function loadRepos() {
       reposEl.innerHTML = `<div class="loading" style="animation:none;">No public repos yet — check back soon.</div>`;
       return;
     }
+    // Sort: prioritize non-forks, then by stars, then by recent update
     repos.sort((a, b) => {
       if (a.fork !== b.fork) return a.fork ? 1 : -1;
       if (b.stargazers_count !== a.stargazers_count) return b.stargazers_count - a.stargazers_count;
       return new Date(b.updated_at) - new Date(a.updated_at);
     });
-
-    // populate carousel for repos with a live site
-    const withSite = repos.filter(r => r.homepage && r.homepage.trim());
-    if (withSite.length) {
-      document.getElementById('sites-wrap').style.display = '';
-      cTrack.innerHTML = withSite.map(siteCard).join('');
-    }
-
     reposEl.innerHTML = repos.map(repoCard).join('');
+    // Re-observe newly inserted reveal nodes
     reposEl.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   } catch (err) {
     reposEl.innerHTML = `
@@ -1494,43 +1217,6 @@ async function loadRepos() {
   }
 }
 loadRepos();
-
-/* ============ LINKEDIN ARTICLES ============ */
-// Add your articles here — each object becomes a card in the Writing section.
-// Once at least one article is added, the section becomes visible automatically.
-const ARTICLES = [
-  // {
-  //   title: 'Your article title',
-  //   date: 'May 2025',
-  //   readTime: '5 min read',
-  //   excerpt: 'One or two sentences summarising the article.',
-  //   url: 'https://www.linkedin.com/pulse/your-article-slug-saurabh-srivastava/'
-  // },
-];
-
-function articleCard(a) {
-  return `
-    <a class="article-card reveal" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">
-      <div class="article-meta">
-        <span class="article-platform">LinkedIn</span>
-        <span>${escapeHtml(a.date)}</span>
-        ${a.readTime ? `<span>${escapeHtml(a.readTime)}</span>` : ''}
-      </div>
-      <div class="article-title">${escapeHtml(a.title)}</div>
-      ${a.excerpt ? `<p class="article-excerpt">${escapeHtml(a.excerpt)}</p>` : ''}
-      <div class="article-read">Read on LinkedIn <span class="arrow">→</span></div>
-    </a>`;
-}
-
-function renderArticles() {
-  if (!ARTICLES.length) return;
-  const section = document.getElementById('writing');
-  const grid = document.getElementById('articles-grid');
-  section.style.display = '';
-  grid.innerHTML = ARTICLES.map(articleCard).join('');
-  grid.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-}
-renderArticles();
 </script>
 </body>
 </html>
