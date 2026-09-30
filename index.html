@@ -679,12 +679,27 @@ section {
   color: var(--muted);
   margin-top: 0.75rem;
 }
+/* Names behind a number, e.g. the three published projects */
+.stat-note {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+  color: var(--dim);
+  margin-top: 0.5rem;
+}
+.stat-note a { transition: color 0.3s; }
+.stat-note a:hover { color: var(--accent); }
+.stat-note a + a::before { content: '·'; margin: 0 0.6em; color: var(--dim); }
 /* Phones keep the three numbers side by side */
 @media (max-width: 640px) {
   .stats { gap: 1rem; }
   .stat { padding-top: 1rem; }
   .stat-num { font-size: clamp(2.4rem, 12vw, 3.5rem); }
   .stat-label { letter-spacing: 0.1em; line-height: 1.5; }
+  .stat-note { letter-spacing: 0; }
+  .stat-note a { display: block; padding: 0.4rem 0; line-height: 1.4; }
+  .stat-note a + a::before { content: none; }
 }
 
 /* ============ EXPERTISE ============ */
@@ -898,6 +913,7 @@ section {
 
 /* ============ PLUGIN SPOTLIGHT ============ */
 .plugin-spotlight {
+  scroll-margin-top: 5.5rem;
   border: 1px solid var(--line);
   background: var(--bg-2);
   margin-bottom: 1.5rem;
@@ -1539,8 +1555,11 @@ footer a:hover { color: var(--accent); }
       <div class="stat-label">Public Repos</div>
     </div>
     <div class="stat">
-      <div class="stat-num"><span data-count="1">1</span></div>
-      <div class="stat-label">Official Jenkins Plugin</div>
+      <div class="stat-num"><span data-count="3">3</span></div>
+      <div class="stat-label">Published Projects</div>
+      <div class="stat-note">
+        <a href="#spot-forgeai">ForgeAI</a><a href="#spot-traceguard">TraceGuard AI</a><a href="#spot-archilens">ArchiLens</a>
+      </div>
     </div>
   </div>
 </section>
@@ -1623,7 +1642,7 @@ footer a:hover { color: var(--accent); }
     </div>
   </div>
   <!-- Featured: Jenkins CI Plugin -->
-  <div class="plugin-spotlight reveal" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-forgeai" data-glow>
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
@@ -1684,7 +1703,7 @@ footer a:hover { color: var(--accent); }
   </div>
 
   <!-- Featured: TraceGuard AI -->
-  <div class="plugin-spotlight reveal" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-traceguard" data-glow>
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
@@ -1738,7 +1757,7 @@ footer a:hover { color: var(--accent); }
   </div>
 
   <!-- Featured: ArchiLens -->
-  <div class="plugin-spotlight reveal" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-archilens" data-glow>
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
