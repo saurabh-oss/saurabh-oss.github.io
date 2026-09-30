@@ -1,6 +1,6 @@
 # saurabh-oss.github.io
 
-Personal portfolio site for **Saurabh Srivastava** — Senior IT Architect, AI Innovation Lead, builder of open-source things.
+Personal portfolio site for **Saurabh Srivastava** — Chief Architect, AI Innovation Lead, builder of open-source things.
 
 🌐 **Live:** https://saurabh-oss.github.io
 
@@ -59,6 +59,12 @@ Build a personal "publishing surface" that turns **16 years of architecture expe
 saurabh-oss.github.io/
 ├── index.html      # Single-page site (HTML + inline CSS + inline JS)
 ├── 404.html        # Custom 404 page in matching aesthetic
+├── favicon.svg     # Browser tab icon
+├── portrait.jpg    # Profile photo (800×1000, shown in the Profile section)
+├── portrait-avatar.jpg  # Square face crop (192×192, shown in the hero)
+├── og-image.png    # Social share card (og-image.svg is its source)
+├── robots.txt      # Crawler rules
+├── sitemap.xml     # Sitemap for search engines
 ├── .nojekyll       # Tell GitHub Pages to skip Jekyll processing
 └── README.md       # This file
 ```
@@ -157,13 +163,18 @@ All content lives in `index.html`. Open it and search for these markers:
 
 | What to change | Where |
 |---|---|
-| **Hero name** | `<h1>` block — line ~ in `<section class="hero">` |
+| **Name and role** | `<div class="hero-eyebrow">` |
+| **Photo** | Replace `portrait.jpg` (4:5) and `portrait-avatar.jpg` (square face crop) — same filenames, no code change |
+| **Hero headline** | `<h1 class="hero-title">` — one `<span class="w">` per word, numbered with `--i` for the staggered reveal |
 | **One-line positioning** | `<p class="hero-sub">` |
+| **Hero blueprint** | `layers` array in `buildBlueprint()` — layer names and sub-labels |
 | **Bio paragraphs** | `<div class="about-text">` |
-| **Stats numbers** | `<div class="stat-num">` (3 of them) |
-| **Expertise / domains** | `<div class="expertise-grid">` — six `.exp-card` blocks |
-| **Manifesto items** | `<div class="manifesto">` — five `.manifesto-item` blocks |
-| **Contact links** | `<div class="contact-grid">` — three `.contact-card` blocks |
+| **Stats numbers** | `<div class="stats">` — set both the text and `data-count` (the repo count updates itself from GitHub) |
+| **Expertise / domains** | `<div class="expertise-grid">` — four `.exp-card` blocks |
+| **Manifesto items** | `<div class="manifesto">` — five `.manifesto-item` blocks (also update the `/ 05` total beside them) |
+| **Flagship projects** | The two `.plugin-spotlight` blocks; their animated panels are driven by the `runDemo(...)` calls |
+| **Pinned repos** | `const PINNED = [...]` near the bottom |
+| **Contact links** | The LinkedIn `.btn` and the `.social` row in `<section id="contact">` |
 | **GitHub username** | `const GH_USER = 'saurabh-oss';` near the bottom |
 
 ### Color theme
@@ -196,33 +207,36 @@ https://api.github.com/users/saurabh-oss/repos?sort=updated&per_page=100
 
 It then:
 
-1. **Sorts** — non-forks first → most stars → most recently updated.
-2. **Renders** — name, description, primary language, stars, forks.
-3. **Animates in** — each card uses `IntersectionObserver` for scroll-reveal.
+1. **Picks** — the four repos named in `PINNED`, in that order. If one is renamed or removed, the slot is filled by the most-starred remaining repo that has a description and isn't a fork.
+2. **Skips** — anything in `EXCLUDE` (the two spotlighted projects and this site) so nothing appears twice.
+3. **Renders** — name, description, primary language, stars, forks.
+4. **Counts** — the total feeds the "Public Repositories" stat and the "All N repositories on GitHub" link.
 
 **Rate limit:** unauthenticated GitHub API allows 60 requests/hour per IP. For a personal portfolio that's far more than enough.
 
 ### To highlight specific projects
 
-If you want to feature only certain repos, edit the `loadRepos()` function in `index.html`:
+Edit the `PINNED` list near the bottom of `index.html`:
 
 ```js
-// Pin specific repos by name
-const PINNED = ['my-flagship-poc', 'ai-architecture-patterns'];
-repos.sort((a, b) => {
-  const ai = PINNED.indexOf(a.name);
-  const bi = PINNED.indexOf(b.name);
-  if (ai !== -1 || bi !== -1) {
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-  }
-  // ... existing sort
-});
+// Hand-picked for the grid, in this order
+const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'archilens'];
 ```
 
-Or filter to only show repos with descriptions:
-```js
-const filtered = repos.filter(r => r.description && !r.fork);
-```
+The grid is laid out for four cards; keep the list at four (or eight) so the rows stay full.
+
+---
+
+## 🎞️ Motion
+
+All animation is plain CSS, SVG and a little vanilla JS — no libraries.
+
+- **Hero blueprint** — an isometric SVG built by `buildBlueprint()`; it draws itself in, carries pulses between layers, and tilts toward the cursor.
+- **Manifesto** — pinned while you scroll; one statement at a time, lit word by word (`updateManifesto()`).
+- **Project panels** — `runDemo()` steps through each analyzer and lands a verdict, only while the panel is on screen.
+- **Small touches** — stat count-up, scroll-progress hairline, active nav link, cursor glow on cards.
+
+Visitors with **"reduce motion"** enabled in their OS get the static version: no pinning, no pulses, everything in its final state.
 
 ---
 
