@@ -62,7 +62,7 @@ saurabh-oss.github.io/
 ├── favicon.svg     # Browser tab icon
 ├── portrait.jpg    # Profile photo (800×1000, shown in the Profile section)
 ├── portrait-avatar.jpg  # Square face crop (192×192, shown in the hero)
-├── og-image.jpg    # Link-preview card with portrait (og-image.svg is its source)
+├── og-card.jpg     # Link-preview image (1200×630 photo, face centred for square thumbnails)
 ├── robots.txt      # Crawler rules
 ├── sitemap.xml     # Sitemap for search engines
 ├── .nojekyll       # Tell GitHub Pages to skip Jekyll processing
@@ -172,7 +172,7 @@ All content lives in `index.html`. Open it and search for these markers:
 | **Stats numbers** | `<div class="stats">` — set both the text and `data-count` (the repo count updates itself from GitHub) |
 | **Expertise / domains** | `<div class="expertise-grid">` — four `.exp-card` blocks |
 | **Manifesto items** | `<div class="manifesto">` — five `.manifesto-item` blocks (also update the `/ 05` total beside them) |
-| **Flagship projects** | The two `.plugin-spotlight` blocks; their animated panels are driven by the `runDemo(...)` calls |
+| **Flagship projects** | The three `.plugin-spotlight` blocks (ForgeAI, TraceGuard AI, ArchiLens); their animated panels are driven by the `runDemo(...)` calls |
 | **Pinned repos** | `const PINNED = [...]` near the bottom |
 | **Contact links** | The LinkedIn `.btn` and the `.social` row in `<section id="contact">` |
 | **GitHub username** | `const GH_USER = 'saurabh-oss';` near the bottom |
@@ -208,7 +208,7 @@ https://api.github.com/users/saurabh-oss/repos?sort=updated&per_page=100
 It then:
 
 1. **Picks** — the four repos named in `PINNED`, in that order. If one is renamed or removed, the slot is filled by the most-starred remaining repo that has a description and isn't a fork.
-2. **Skips** — anything in `EXCLUDE` (the two spotlighted projects and this site) so nothing appears twice.
+2. **Skips** — anything in `EXCLUDE` (the three spotlighted projects and this site) so nothing appears twice.
 3. **Renders** — name, description, primary language, stars, forks.
 4. **Counts** — the total feeds the "Public Repositories" stat and the "All N repositories on GitHub" link.
 
@@ -220,7 +220,7 @@ Edit the `PINNED` list near the bottom of `index.html`:
 
 ```js
 // Hand-picked for the grid, in this order
-const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'archilens'];
+const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'code-bridge'];
 ```
 
 The grid is laid out for four cards; keep the list at four (or eight) so the rows stay full.

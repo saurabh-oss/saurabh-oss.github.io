@@ -40,17 +40,17 @@
 <meta property="og:description" content="Chief Architect with 16 years building open-source, full-stack, AI-driven and low-code systems. Currently driving AI innovation across enterprise software." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://saurabh-oss.github.io/" />
-<meta property="og:image" content="https://saurabh-oss.github.io/og-image.jpg" />
+<meta property="og:image" content="https://saurabh-oss.github.io/og-card.jpg" />
 <meta property="og:image:type" content="image/jpeg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Portrait of Saurabh Srivastava, Chief Architect — Systems &amp; AI" />
+<meta property="og:image:alt" content="Portrait of Saurabh Srivastava" />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Saurabh Srivastava — Architect of Systems & AI | Portfolio" />
 <meta name="twitter:description" content="Chief Architect with 16 years building open-source, full-stack, AI-driven and low-code systems. Currently driving AI innovation across enterprise software." />
-<meta name="twitter:image" content="https://saurabh-oss.github.io/og-image.jpg" />
+<meta name="twitter:image" content="https://saurabh-oss.github.io/og-card.jpg" />
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1052,12 +1052,12 @@ section {
   overflow: hidden;
   white-space: nowrap;
   vertical-align: bottom;
-  width: 33ch;
+  width: calc(var(--chars) * 1ch);
   letter-spacing: 0;
   color: var(--muted);
 }
 .demo-cmd .typed b { color: var(--accent); font-weight: 400; }
-.demo.typing .typed { animation: typing 1.4s steps(33); }
+.demo.typing .typed { animation: typing 1.4s steps(var(--chars)); }
 @keyframes typing {
   from { width: 0; }
 }
@@ -1721,7 +1721,7 @@ footer a:hover { color: var(--accent); }
       <div class="demo" id="demo-trace">
         <div class="demo-head demo-cmd">
           <span class="prompt">$</span>
-          <span class="typed"><b>docker pull</b> sauvast/traceguard-ai</span>
+          <span class="typed" style="--chars:33"><b>docker pull</b> sauvast/traceguard-ai</span>
         </div>
         <ol class="demo-steps" aria-label="The quality loop">
           <li>Classify the failure</li>
@@ -1732,6 +1732,67 @@ footer a:hover { color: var(--accent); }
         <div class="demo-foot">
           Agent
           <span class="verdict-pill verdict-ship" data-verdict>READY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured: ArchiLens -->
+  <div class="plugin-spotlight reveal" data-glow>
+    <div class="plugin-inner">
+      <div>
+        <div class="plugin-badge">
+          <span class="plugin-badge-dot"></span>
+          PyPI · archilens · Published
+        </div>
+        <h3 class="plugin-name">Archi<em>Lens</em></h3>
+        <p class="plugin-tagline">
+          Google Maps for codebases. Analyses any Git repository and generates interactive, layered architecture diagrams — from system context down to runtime process flows — and flags architecture drift in CI.
+        </p>
+        <div class="plugin-cta">
+          <a class="plugin-gh-link" href="https://pypi.org/project/archilens/" target="_blank" rel="noopener">
+            PyPI ↗
+          </a>
+          <a class="plugin-gh-link ghost" href="https://github.com/saurabh-oss/archilens" target="_blank" rel="noopener">
+            GitHub →
+          </a>
+          <a class="plugin-gh-link ghost" href="https://saurabh-oss.github.io/archilens/" target="_blank" rel="noopener">
+            Website →
+          </a>
+        </div>
+        <div class="plugin-specs">
+          <div class="plugin-spec-item">
+            <strong>Analyses</strong>
+            Python · Java · JS/TS · Go
+          </div>
+          <div class="plugin-spec-item">
+            <strong>Output</strong>
+            Mermaid · D2 · PlantUML
+          </div>
+          <div class="plugin-spec-item">
+            <strong>AI</strong>
+            Optional — runs without API keys
+          </div>
+          <div class="plugin-spec-item">
+            <strong>License</strong>
+            MIT
+          </div>
+        </div>
+      </div>
+      <div class="demo" id="demo-archilens">
+        <div class="demo-head demo-cmd">
+          <span class="prompt">$</span>
+          <span class="typed" style="--chars:21"><b>pip install</b> archilens</span>
+        </div>
+        <ol class="demo-steps" aria-label="The four diagram levels">
+          <li>L0 · System context</li>
+          <li>L1 · Module architecture</li>
+          <li>L2 · Component detail</li>
+          <li>L3 · Process flows</li>
+        </ol>
+        <div class="demo-foot">
+          Diagrams
+          <span class="verdict-pill verdict-ship" data-verdict>MERMAID</span>
         </div>
       </div>
     </div>
@@ -2094,15 +2155,20 @@ runDemo(document.getElementById('demo-forge'), [
 runDemo(document.getElementById('demo-trace'), [
   { verdict: 'READY', cls: 'verdict-ship' },
 ], 850);
+runDemo(document.getElementById('demo-archilens'), [
+  { verdict: 'MERMAID',  cls: 'verdict-ship' },
+  { verdict: 'D2',       cls: 'verdict-ship' },
+  { verdict: 'PLANTUML', cls: 'verdict-ship' },
+], 850);
 
 /* ============ GITHUB REPOS ============ */
 const GH_USER = 'saurabh-oss';
 const reposEl = document.getElementById('repos');
 
 // Hand-picked for the grid, in this order
-const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'archilens'];
+const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'code-bridge'];
 // Shown elsewhere on the page already — never repeated in the grid
-const EXCLUDE = ['traceguard-ai', 'forgeai-pipeline-intelligence', 'saurabh-oss.github.io'];
+const EXCLUDE = ['traceguard-ai', 'forgeai-pipeline-intelligence', 'archilens', 'saurabh-oss.github.io'];
 
 // Language colour map (extend as needed)
 const langColors = {
