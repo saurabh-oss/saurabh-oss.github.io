@@ -62,7 +62,7 @@ saurabh-oss.github.io/
 ├── favicon.svg     # Browser tab icon
 ├── portrait.jpg    # Profile photo (800×1000, shown in the Profile section)
 ├── portrait-avatar.jpg  # Square face crop (192×192, shown in the hero)
-├── og-image.png    # Social share card (og-image.svg is its source)
+├── og-image.jpg    # Link-preview card with portrait (og-image.svg is its source)
 ├── robots.txt      # Crawler rules
 ├── sitemap.xml     # Sitemap for search engines
 ├── .nojekyll       # Tell GitHub Pages to skip Jekyll processing
