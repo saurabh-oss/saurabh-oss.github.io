@@ -1329,35 +1329,149 @@ section {
   text-underline-offset: 5px;
   text-decoration-thickness: 1px;
 }
-.projects-grid {
+/* ============ REPO CAROUSEL ============ */
+.carousel { margin-top: clamp(3rem, 6vw, 4.5rem); }
+.carousel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  margin-bottom: 1rem;
+}
+.carousel-title {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.carousel-title em { font-style: italic; color: var(--accent); }
+.carousel-sub {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 0.7rem;
+}
+.carousel-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+}
+.chip-n { color: var(--dim); }
+.chip:hover { border-color: var(--accent); color: var(--text); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.chip[aria-pressed="true"] .chip-n { color: rgba(12, 11, 9, 0.6); }
+/* The stage: cards in 3D coverflow, positioned by the carousel script */
+.carousel-stage {
+  --cw: clamp(250px, 24vw, 340px);
+  --ch: 300px;
+  position: relative;
+  height: calc(var(--ch) + 3.5rem);
+  margin: 0 calc(-1 * var(--pad));
+  perspective: 1400px;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+  outline: none;
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+.carousel-stage.dragging { cursor: grabbing; }
+.carousel-stage .repo-card {
+  position: absolute;
+  top: 1.75rem;
+  left: 50%;
+  width: var(--cw);
+  height: var(--ch);
+  margin-left: calc(var(--cw) / -2);
+  transition: border-color 0.4s, box-shadow 0.5s;
+  -webkit-user-drag: none;
+}
+/* Side cards dim with distance */
+.carousel-stage .repo-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: var(--shade, 0);
+  pointer-events: none;
+}
+.carousel-stage .repo-card.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 34px 70px -30px rgba(0, 0, 0, 0.9), 0 0 70px -16px rgba(212,165,116,0.3);
+}
+.carousel-stage .repo-card.is-active::before { width: 100%; }
+.carousel-stage .repo-card.is-active .repo-name { color: var(--accent); }
+.carousel-stage:focus-visible .repo-card.is-active { outline: 2px solid var(--accent); outline-offset: 4px; }
+.carousel-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+}
+.carousel-btn {
+  width: 48px; height: 48px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  font-size: 1.1rem;
+  color: var(--text);
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
-@media (max-width: 1100px) {
-  .projects-grid { grid-template-columns: repeat(2, 1fr); }
+.carousel-btn:hover, .carousel-btn:focus-visible { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.carousel-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
 }
-/* Phones: a swipeable row instead of a tall stack */
+.carousel-index { color: var(--accent); }
+.carousel-bar {
+  position: relative;
+  width: clamp(80px, 16vw, 220px);
+  height: 1px;
+  margin-left: 0.6rem;
+  background: var(--line);
+}
+.carousel-bar i {
+  position: absolute;
+  top: -1px;
+  height: 3px;
+  background: var(--accent);
+  transition: left 0.45s var(--ease), width 0.45s var(--ease);
+}
+.carousel-foot .all-repos { margin: 0 0 0 auto; }
 @media (max-width: 600px) {
-  .projects-grid {
-    display: flex;
-    gap: 1rem;
-    margin: 0 calc(-1 * var(--pad));
-    padding: 0.25rem var(--pad) 0.5rem;
-    overflow: auto hidden;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 var(--pad);
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .projects-grid::-webkit-scrollbar { display: none; }
-  .projects-grid .repo-card {
-    flex: 0 0 82%;
-    scroll-snap-align: start;
-    opacity: 1;
-    translate: none;
-  }
-  .projects-grid .loading { flex: 1 0 100%; }
+  .carousel-stage { --cw: min(76vw, 300px); --ch: 290px; }
+  .carousel-foot .all-repos { margin-left: 0; }
+}
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 .repo-card {
   border: 1px solid var(--line);
@@ -1379,7 +1493,6 @@ section {
 }
 .repo-card:hover {
   border-color: var(--accent);
-  translate: 0 -4px;
 }
 .repo-card:hover::before { width: 100%; }
 .repo-head {
@@ -1411,13 +1524,13 @@ section {
   color: var(--muted);
   line-height: 1.55;
   margin-bottom: 1.5rem;
-  flex-grow: 1;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   overflow: hidden;
 }
+.repo-updated { margin-left: auto; }
 .repo-foot {
   display: flex;
   gap: 1rem;
@@ -1426,16 +1539,34 @@ section {
   font-size: 0.72rem;
   color: var(--dim);
   letter-spacing: 0.05em;
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
-.repo-foot .lang {
+.repo-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+}
+.repo-tag {
+  padding: 0.2rem 0.55rem;
+  border: 1px solid rgba(212,165,116,0.35);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.repo-card .lang {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   color: var(--text);
 }
-.repo-foot .lang-dot {
+.repo-card .lang-dot {
   width: 8px; height: 8px;
   border-radius: 50%;
   background: var(--accent);
@@ -1466,7 +1597,6 @@ section {
   padding: 4rem 2rem;
   font-family: var(--mono);
   color: var(--muted);
-  grid-column: 1 / -1;
 }
 .loading::after {
   content: '...';
@@ -2016,12 +2146,31 @@ footer a:hover { color: var(--accent); }
     </div>
   </div>
 
-  <div class="projects-grid" id="repos">
-    <div class="loading">Loading repositories</div>
+  <!-- Every original repository, as a 3D coverflow; built by the carousel script -->
+  <div class="carousel reveal" id="carousel" role="region" aria-roledescription="carousel" aria-label="All repositories">
+    <div class="carousel-head">
+      <div>
+        <h3 class="carousel-title">Every repository, <em>in the open.</em></h3>
+        <p class="carousel-sub"><span id="carousel-count">27</span> original repositories · drag, swipe or use the arrows</p>
+      </div>
+      <div class="carousel-filters" id="carousel-filters" role="group" aria-label="Filter by language"></div>
+    </div>
+    <div class="carousel-stage" id="repos" tabindex="0" aria-label="Repositories. Use the left and right arrow keys to browse.">
+      <div class="loading">Loading repositories</div>
+    </div>
+    <div class="carousel-foot">
+      <button class="carousel-btn" id="carousel-prev" type="button" aria-label="Previous repository">←</button>
+      <button class="carousel-btn" id="carousel-next" type="button" aria-label="Next repository">→</button>
+      <p class="carousel-meter" aria-hidden="true">
+        <span class="carousel-index" id="carousel-index">01</span> / <span id="carousel-total">27</span>
+        <span class="carousel-bar"><i id="carousel-bar"></i></span>
+      </p>
+      <a class="all-repos" href="https://github.com/saurabh-oss?tab=repositories" target="_blank" rel="noopener">
+        All <span id="repo-total">30</span> repositories on GitHub <span>→</span>
+      </a>
+    </div>
+    <p class="sr-only" aria-live="polite" id="carousel-live"></p>
   </div>
-  <a class="all-repos reveal" href="https://github.com/saurabh-oss?tab=repositories" target="_blank" rel="noopener">
-    All <span id="repo-total">30</span> repositories on GitHub <span>→</span>
-  </a>
 </section>
 
 <!-- ====== CONTACT ====== -->
@@ -2473,10 +2622,8 @@ runDemo(document.getElementById('demo-archilens'), [
 const GH_USER = 'saurabh-oss';
 const reposEl = document.getElementById('repos');
 
-// Hand-picked for the grid, in this order
-const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'code-bridge'];
-// Shown elsewhere on the page already — never repeated in the grid
-const EXCLUDE = ['traceguard-ai', 'forgeai-pipeline-intelligence', 'archilens', 'saurabh-oss.github.io'];
+// Highlighted in their own cards above; tagged in the carousel
+const FEATURED = ['forgeai-pipeline-intelligence', 'traceguard-ai', 'archilens'];
 
 // Language colour map (extend as needed)
 const langColors = {
@@ -2492,12 +2639,18 @@ function escapeHtml(s) {
   })[c]);
 }
 
-function repoCard(r, i) {
+const monthYear = iso => new Date(iso).toLocaleDateString('en', { month: 'short', year: 'numeric' });
+
+function repoCard(r) {
   const desc = r.description ? escapeHtml(r.description) : 'No description provided.';
   const lang = r.language || 'Mixed';
   const langColor = langColors[r.language] || '#d4a574';
   return `
-    <a class="repo-card reveal reveal-delay-${i}" data-glow data-tilt="6" href="${r.html_url}" target="_blank" rel="noopener">
+    <a class="repo-card" href="${r.html_url}" target="_blank" rel="noopener" draggable="false" tabindex="-1">
+      <div class="repo-top">
+        <span class="lang"><span class="lang-dot" style="background:${langColor}"></span>${escapeHtml(lang)}</span>
+        ${FEATURED.includes(r.name) ? '<span class="repo-tag">Featured</span>' : ''}
+      </div>
       <div class="repo-head">
         <div class="repo-name">${escapeHtml(r.name)}</div>
         <svg class="repo-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -2506,15 +2659,212 @@ function repoCard(r, i) {
       </div>
       <p class="repo-desc">${desc}</p>
       <div class="repo-foot">
-        <span class="lang">
-          <span class="lang-dot" style="background:${langColor}"></span>
-          ${escapeHtml(lang)}
-        </span>
         <span class="stat-item">★ ${r.stargazers_count}</span>
         <span class="stat-item">⑂ ${r.forks_count}</span>
+        <span class="stat-item repo-updated">Updated ${monthYear(r.updated_at)}</span>
       </div>
     </a>`;
 }
+
+/* ============ REPO CAROUSEL ============ */
+// A 3D coverflow of every original repository. `pos` is the (fractional) card at the centre;
+// it eases toward `target`, so drags, flicks, buttons, keys and autoplay all share one motion.
+const carousel = (() => {
+  const stage = reposEl;
+  const $ = id => document.getElementById(id);
+  const filtersEl = $('carousel-filters'), indexEl = $('carousel-index'), totalEl = $('carousel-total');
+  const barEl = $('carousel-bar'), liveEl = $('carousel-live'), countEl = $('carousel-count');
+  const GROUPS = ['Python', 'TypeScript', 'JavaScript', 'Java'];
+  const groupOf = r => (GROUPS.includes(r.language) ? r.language : 'Other');
+  let all = [], list = [], cards = [], pos = 0, target = 0, raf = 0, wrap = false;
+  let near = 220, far = 110;               // spacing: first neighbour, then each card beyond
+  let drag = null, suppressClick = false, lastInteract = 0, hovering = false, focused = false, inView = false;
+
+  // Signed distance of card i from the centre; with wrap on, the shortest way round the loop
+  const offset = (i, from = pos) => {
+    let d = i - from;
+    if (wrap) { const n = cards.length; d = ((d % n) + n * 1.5) % n - n / 2; }
+    return d;
+  };
+  const current = () => { const n = cards.length; return ((Math.round(target) % n) + n) % n; };
+
+  function measure() {
+    const w = cards[0] ? cards[0].offsetWidth : 300;
+    near = w * 0.66;
+    far = w * 0.34;
+  }
+
+  function layout() {
+    cards.forEach((card, i) => {
+      const d = offset(i), ad = Math.abs(d), sgn = Math.sign(d);
+      const x = sgn * (Math.min(ad, 1) * near + Math.max(ad - 1, 0) * far);
+      const z = -Math.min(ad, 6) * 130;
+      const ry = reduceMotion ? 0 : -sgn * Math.min(ad, 1) * 42;
+      card.style.transform = `translate3d(${x.toFixed(1)}px,0,${z.toFixed(1)}px) rotateY(${ry.toFixed(2)}deg)`;
+      card.style.zIndex = 100 - Math.round(ad * 10);
+      card.style.setProperty('--shade', Math.min(ad * 0.2, 0.72).toFixed(3));
+      card.style.visibility = ad > 5.5 ? 'hidden' : '';
+      const active = ad < 0.5;
+      if (active !== card.classList.contains('is-active')) {
+        card.classList.toggle('is-active', active);
+        card.tabIndex = active ? 0 : -1;
+      }
+    });
+  }
+
+  function updateMeter() {
+    const n = cards.length, i = current();
+    indexEl.textContent = String(i + 1).padStart(2, '0');
+    totalEl.textContent = String(n).padStart(2, '0');
+    barEl.style.width = 100 / n + '%';
+    barEl.style.left = i * 100 / n + '%';
+    if (list[i]) liveEl.textContent = `${list[i].name}, ${i + 1} of ${n}`;
+  }
+
+  function tick() {
+    const diff = target - pos;
+    pos = reduceMotion || Math.abs(diff) < 0.001 ? target : pos + diff * 0.12;
+    layout();
+    raf = pos === target ? 0 : requestAnimationFrame(tick);
+  }
+
+  function go(t, byUser = true) {
+    if (!cards.length) return;
+    target = wrap ? t : clamp(t, 0, cards.length - 1);
+    if (byUser) lastInteract = Date.now();
+    updateMeter();
+    // Keyboard users keep focus on the card that is arriving
+    if (stage.contains(document.activeElement) && document.activeElement !== stage) cards[current()].focus({ preventScroll: true });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function render(filter) {
+    list = filter === 'All' ? all : all.filter(r => groupOf(r) === filter);
+    stage.innerHTML = list.map(repoCard).join('');
+    cards = [...stage.querySelectorAll('.repo-card')];
+    wrap = cards.length > 6;
+    measure();
+    // Cards sweep in from the right, then settle on the first one
+    pos = target = reduceMotion ? 0 : (wrap ? 3 : 0);
+    layout();
+    go(0, false);
+  }
+
+  function buildFilters() {
+    const counts = {};
+    all.forEach(r => { counts[groupOf(r)] = (counts[groupOf(r)] || 0) + 1; });
+    const keys = ['All', ...GROUPS, 'Other'].filter(k => k === 'All' || counts[k]);
+    filtersEl.innerHTML = keys.map(k =>
+      `<button class="chip" type="button" aria-pressed="${k === 'All'}" data-filter="${k}">${k}<span class="chip-n">${k === 'All' ? all.length : counts[k]}</span></button>`
+    ).join('');
+  }
+
+  filtersEl.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip || chip.getAttribute('aria-pressed') === 'true') return;
+    filtersEl.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === chip));
+    lastInteract = Date.now();
+    render(chip.dataset.filter);
+  });
+  $('carousel-prev').addEventListener('click', () => go(target - 1));
+  $('carousel-next').addEventListener('click', () => go(target + 1));
+
+  // Clicking a side card brings it to the centre; clicking the centre card opens the repo
+  stage.addEventListener('click', e => {
+    const card = e.target.closest('.repo-card');
+    if (suppressClick) { e.preventDefault(); return; }
+    if (!card) return;
+    const i = cards.indexOf(card);
+    if (i !== current()) {
+      e.preventDefault();
+      go(target + Math.round(offset(i, target)));
+    }
+  });
+
+  // Drag or swipe; a quick flick carries on for a few cards
+  stage.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || !cards.length) return;
+    drag = { id: e.pointerId, x: e.clientX, start: target, moved: false, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved) {
+      if (Math.abs(dx) < 6) return;
+      drag.moved = true;
+      stage.setPointerCapture(e.pointerId);
+      stage.classList.add('dragging');
+    }
+    const dt = e.timeStamp - drag.lastT;
+    if (dt > 0) drag.v = (e.clientX - drag.lastX) / dt;
+    drag.lastX = e.clientX;
+    drag.lastT = e.timeStamp;
+    target = drag.start - dx / near;
+    if (!wrap) target = clamp(target, -0.4, cards.length - 0.6);
+    pos = target;
+    lastInteract = Date.now();
+    layout();
+  });
+  const endDrag = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    if (drag.moved) {
+      stage.classList.remove('dragging');
+      suppressClick = true;
+      setTimeout(() => { suppressClick = false; }, 80);
+      go(Math.round(target + clamp(-drag.v * 2.2, -3, 3)));
+    }
+    drag = null;
+  };
+  stage.addEventListener('pointerup', endDrag);
+  stage.addEventListener('pointercancel', endDrag);
+
+  // Sideways trackpad swipes; vertical scrolling passes through untouched
+  let wheelSum = 0, wheelAt = 0;
+  stage.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    wheelSum += e.deltaX;
+    if (Math.abs(wheelSum) > 40 && e.timeStamp - wheelAt > 220) {
+      go(target + Math.sign(wheelSum));
+      wheelSum = 0;
+      wheelAt = e.timeStamp;
+    }
+  }, { passive: false });
+
+  stage.addEventListener('keydown', e => {
+    const moves = { ArrowRight: 1, ArrowLeft: -1 };
+    if (e.key in moves) { e.preventDefault(); go(target + moves[e.key]); }
+    if (e.key === 'Home') { e.preventDefault(); go(target - current()); }
+    if (e.key === 'End') { e.preventDefault(); go(target + cards.length - 1 - current()); }
+  });
+
+  // Autoplay: a slow advance while on screen, paused by hover, focus, or any recent interaction
+  const carouselEl = $('carousel');
+  carouselEl.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hovering = true; });
+  carouselEl.addEventListener('pointerleave', () => { hovering = false; });
+  carouselEl.addEventListener('focusin', () => { focused = true; });
+  carouselEl.addEventListener('focusout', e => { if (!carouselEl.contains(e.relatedTarget)) focused = false; });
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; }, { threshold: 0.4 }).observe(stage);
+  if (!reduceMotion) {
+    setInterval(() => {
+      if (!inView || hovering || focused || drag || document.hidden || Date.now() - lastInteract < 8000) return;
+      go(!wrap && current() === cards.length - 1 ? 0 : target + 1, false);
+    }, 3600);
+  }
+
+  window.addEventListener('resize', () => { measure(); layout(); });
+
+  return {
+    load(repos) {
+      // Forks of other people's projects are left out; strongest first
+      all = repos.filter(r => !r.fork)
+        .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.updated_at) - new Date(a.updated_at));
+      countEl.textContent = all.length;
+      buildFilters();
+      render('All');
+    },
+  };
+})();
 
 // Only the fields the page uses, so the cached copy stays small
 const slimRepos = list => list.map(r => ({
@@ -2546,16 +2896,7 @@ async function loadRepos() {
     if (repoCount.dataset.done) repoCount.textContent = repos.length;
     document.getElementById('repo-total').textContent = repos.length;
 
-    const picks = PINNED.map(name => repos.find(r => r.name === name)).filter(Boolean);
-    // If a pinned repo is renamed or removed, top up with the best of the rest
-    const rest = repos
-      .filter(r => !r.fork && r.description && !PINNED.includes(r.name) && !EXCLUDE.includes(r.name))
-      .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.updated_at) - new Date(a.updated_at));
-    while (picks.length < PINNED.length && rest.length) picks.push(rest.shift());
-
-    reposEl.innerHTML = picks.map(repoCard).join('');
-    // Re-observe newly inserted reveal nodes
-    reposEl.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    carousel.load(repos);
   } catch (err) {
     reposEl.innerHTML = `
       <div class="loading" style="animation:none;">

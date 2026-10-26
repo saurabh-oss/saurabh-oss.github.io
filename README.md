@@ -180,7 +180,7 @@ All content lives in `index.html`. Open it and search for these markers:
 | **Expertise / domains** | `<div class="expertise-grid">` — four `.exp-card` blocks |
 | **Manifesto items** | `<div class="manifesto">` — five `.manifesto-item` blocks (also update the `/ 05` total beside them) |
 | **Flagship projects** | The three `.plugin-spotlight` blocks (ForgeAI, TraceGuard AI, ArchiLens); their animated panels are driven by the `runDemo(...)` calls |
-| **Pinned repos** | `const PINNED = [...]` near the bottom |
+| **Repo carousel** | Built from the live repo list by `carousel.load()`; `const FEATURED = [...]` names the repos tagged "Featured" |
 | **Contact links** | The LinkedIn `.btn` and the `.social` row in `<section id="contact">` |
 | **GitHub username** | `const GH_USER = 'saurabh-oss';` near the bottom |
 
@@ -214,10 +214,12 @@ https://api.github.com/users/saurabh-oss/repos?sort=updated&per_page=100
 
 It then:
 
-1. **Picks** — the four repos named in `PINNED`, in that order. If one is renamed or removed, the slot is filled by the most-starred remaining repo that has a description and isn't a fork.
-2. **Skips** — anything in `EXCLUDE` (the three spotlighted projects and this site) so nothing appears twice.
-3. **Renders** — name, description, primary language, stars, forks.
-4. **Counts** — the total feeds the "Public Repositories" stat and the "All N repositories on GitHub" link.
+1. **Filters** — leaves out forks of other people's projects; everything else goes in the carousel, most-starred first.
+2. **Renders** — a 3D coverflow card per repo: language, name, description, stars, forks, last update. Repos in `FEATURED` get a "Featured" tag.
+3. **Groups** — language filter chips (Python, TypeScript, JavaScript, Java, Other) with counts.
+4. **Counts** — the total feeds the "Public Repos" stat and the "All N repositories on GitHub" link.
+
+Visitors can drag or swipe (a flick carries on for a few cards), use a sideways trackpad swipe, the arrow buttons or arrow keys, or click a side card to bring it to the centre; clicking the centre card opens the repo. It advances on its own every few seconds while on screen, and pauses on hover, focus, or for 8 seconds after any interaction.
 
 **Rate limit:** the unauthenticated GitHub API allows 60 requests per hour per IP address, and everyone behind one office network shares that allowance. So the page:
 
@@ -227,19 +229,17 @@ It then:
 Refresh the snapshot now and then (needs the GitHub CLI, logged in):
 
 ```bash
-gh api "users/saurabh-oss/repos?per_page=100&sort=updated" --paginate   --jq '[.[] | {name, html_url, description, language, stargazers_count, forks_count, fork, updated_at}]' > repos.json
+gh api "users/saurabh-oss/repos?per_page=100&sort=updated" --paginate --jq '[.[] | {name, html_url, description, language, stargazers_count, forks_count, fork, updated_at}]' > repos.json
 ```
 
-### To highlight specific projects
+### To tag different projects as featured
 
-Edit the `PINNED` list near the bottom of `index.html`:
+Edit the `FEATURED` list near the bottom of `index.html`:
 
 ```js
-// Hand-picked for the grid, in this order
-const PINNED = ['gepa-langchain-lab', 'testloom', 'poiesis', 'code-bridge'];
+// Highlighted in their own cards above; tagged in the carousel
+const FEATURED = ['forgeai-pipeline-intelligence', 'traceguard-ai', 'archilens'];
 ```
-
-The grid is laid out for four cards; keep the list at four (or eight) so the rows stay full.
 
 ---
 
