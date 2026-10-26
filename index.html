@@ -2266,6 +2266,23 @@ document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
   band.classList.add('is-looping');
 })();
 
+/* ============ GITHUB API, CACHED ============ */
+// GitHub allows 60 unauthenticated API calls per hour per IP address, and everyone behind one
+// office network shares that. Each visitor's browser keeps a successful answer for 6 hours,
+// so reloads and return visits cost nothing.
+const CACHE_HOURS = 6;
+async function cachedJSON(key, url, slim = d => d) {
+  try {
+    const hit = JSON.parse(localStorage.getItem(key));
+    if (hit && Date.now() - hit.t < CACHE_HOURS * 3600e3) return hit.data;
+  } catch (e) { /* storage blocked or empty */ }
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(url + ' → ' + res.status);
+  const data = slim(await res.json());
+  try { localStorage.setItem(key, JSON.stringify({ t: Date.now(), data })); } catch (e) { /* storage full or blocked */ }
+  return data;
+}
+
 /* ============ LIVE REGISTRY DATA ============ */
 // Versions are read from the registries, so the page keeps up with new releases on its own
 const setLive = (key, text) => document.querySelectorAll(`[data-live="${key}"]`).forEach(el => { el.textContent = text; });
@@ -2276,8 +2293,8 @@ fetch('https://pypi.org/pypi/archilens/json')
     setLive('archilens-releases', Object.keys(d.releases).length + ' releases');
   })
   .catch(() => {});
-fetch('https://api.github.com/repos/jenkinsci/forgeai-pipeline-intelligence-plugin/releases/latest')
-  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+cachedJSON('forgeai-release', 'https://api.github.com/repos/jenkinsci/forgeai-pipeline-intelligence-plugin/releases/latest',
+  d => ({ tag_name: d.tag_name, published_at: d.published_at }))
   .then(d => {
     const when = new Date(d.published_at).toLocaleDateString('en', { month: 'short', year: 'numeric' });
     setLive('forgeai-release', `Release ${d.tag_name.split('.')[0]} · ${when}`);
@@ -2499,11 +2516,26 @@ function repoCard(r, i) {
     </a>`;
 }
 
+// Only the fields the page uses, so the cached copy stays small
+const slimRepos = list => list.map(r => ({
+  name: r.name, html_url: r.html_url, description: r.description, language: r.language,
+  stargazers_count: r.stargazers_count, forks_count: r.forks_count, fork: r.fork, updated_at: r.updated_at,
+}));
+
 async function loadRepos() {
+  let repos;
   try {
-    const res = await fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`);
-    if (!res.ok) throw new Error('GitHub API ' + res.status);
-    const repos = await res.json();
+    repos = await cachedJSON('gh-repos', `https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`, slimRepos);
+  } catch (err) {
+    // GitHub refused (usually the hourly limit): use the snapshot published with the site
+    console.warn('Live repo list unavailable, using snapshot:', err.message);
+    try {
+      const res = await fetch('repos.json');
+      if (res.ok) repos = await res.json();
+    } catch (e) { /* offline */ }
+  }
+  try {
+    if (!repos) throw new Error('No repo data');
     if (!repos.length) {
       reposEl.innerHTML = `<div class="loading" style="animation:none;">No public repos yet — check back soon.</div>`;
       return;

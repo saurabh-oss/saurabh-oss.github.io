@@ -69,6 +69,7 @@ saurabh-oss.github.io/
 ├── og-card.jpg     # Link-preview image (1200×630 photo, face centred for square thumbnails)
 ├── robots.txt      # Crawler rules
 ├── sitemap.xml     # Sitemap for search engines
+├── repos.json      # Snapshot of the public repo list, used when GitHub's API limit is hit
 ├── .nojekyll       # Tell GitHub Pages to skip Jekyll processing
 └── README.md       # This file
 ```
@@ -218,7 +219,16 @@ It then:
 3. **Renders** — name, description, primary language, stars, forks.
 4. **Counts** — the total feeds the "Public Repositories" stat and the "All N repositories on GitHub" link.
 
-**Rate limit:** unauthenticated GitHub API allows 60 requests/hour per IP. For a personal portfolio that's far more than enough.
+**Rate limit:** the unauthenticated GitHub API allows 60 requests per hour per IP address, and everyone behind one office network shares that allowance. So the page:
+
+1. **Caches** each successful answer in the visitor's browser for 6 hours (`cachedJSON()`), so reloads and return visits make no API calls.
+2. **Falls back** to `repos.json`, a snapshot published with the site, when GitHub refuses. The cards always render; only star counts can lag.
+
+Refresh the snapshot now and then (needs the GitHub CLI, logged in):
+
+```bash
+gh api "users/saurabh-oss/repos?per_page=100&sort=updated" --paginate   --jq '[.[] | {name, html_url, description, language, stargazers_count, forks_count, fork, updated_at}]' > repos.json
+```
 
 ### To highlight specific projects
 

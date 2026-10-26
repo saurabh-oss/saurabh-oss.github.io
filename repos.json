@@ -1,0 +1,302 @@
+[
+ {
+  "description": "Blueprint of who I am and what I ship. Static site, zero build step, live GitHub feed. → saurabh-oss.github.io",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/saurabh-oss.github.io",
+  "language": "HTML",
+  "name": "saurabh-oss.github.io",
+  "stargazers_count": 1,
+  "updated_at": "2026-10-26T04:02:03Z"
+ },
+ {
+  "description": "Architecture diagrams from your Git repo, dependency rules checked in CI, and an architecture diff with an optional AI review on every pull request.",
+  "fork": false,
+  "forks_count": 1,
+  "html_url": "https://github.com/saurabh-oss/archilens",
+  "language": "Python",
+  "name": "archilens",
+  "stargazers_count": 1,
+  "updated_at": "2026-10-25T12:50:51Z"
+ },
+ {
+  "description": "A contact centre that decides when to solve and when to sell - working prototype",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cx-growth",
+  "language": "Python",
+  "name": "cx-growth",
+  "stargazers_count": 0,
+  "updated_at": "2026-10-09T06:44:06Z"
+ },
+ {
+  "description": "Autonomous engineering platform: business input to a verified, deployed application",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/poiesis",
+  "language": "Python",
+  "name": "poiesis",
+  "stargazers_count": 1,
+  "updated_at": "2026-09-28T06:47:32Z"
+ },
+ {
+  "description": "TestLoom — Open-source, LLM-agnostic AI framework for automated test case generation. Weave comprehensive test suites from requirements using any LLM provider.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/testloom",
+  "language": "Python",
+  "name": "testloom",
+  "stargazers_count": 2,
+  "updated_at": "2026-08-08T22:23:52Z"
+ },
+ {
+  "description": "Self-hosted AI content pipeline: one idea → LinkedIn, X, YouTube, dev.to, Reddit and Reels — drafted by Claude, delivered to your phone",
+  "fork": false,
+  "forks_count": 1,
+  "html_url": "https://github.com/saurabh-oss/dispatch-social",
+  "language": "JavaScript",
+  "name": "dispatch-social",
+  "stargazers_count": 0,
+  "updated_at": "2026-07-06T08:47:20Z"
+ },
+ {
+  "description": "Production-ready boilerplate for building and automatically optimizing  LangChain RAG applications. Implements three-layer architecture:  Build (LangChain) → Measure (MLflow) → Optimize (GEPA + MEGA).",
+  "fork": false,
+  "forks_count": 1,
+  "html_url": "https://github.com/saurabh-oss/gepa-langchain-lab",
+  "language": "Python",
+  "name": "gepa-langchain-lab",
+  "stargazers_count": 5,
+  "updated_at": "2026-06-15T09:02:11Z"
+ },
+ {
+  "description": "Autonomous quality firewall for LLM agents - classifies failures, generates patches, writes evaluators, and runs shadow deployments. Built on LangSmith + LangGraph + Groq.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/traceguard-ai",
+  "language": "Python",
+  "name": "traceguard-ai",
+  "stargazers_count": 4,
+  "updated_at": "2026-06-14T00:19:59Z"
+ },
+ {
+  "description": "Setting up a governed and secure environment for organizations to use Cursor with Responsible AI and transparent Monitoring",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cursor-responsible-ai-starter",
+  "language": "Python",
+  "name": "cursor-responsible-ai-starter",
+  "stargazers_count": 1,
+  "updated_at": "2026-06-09T07:12:30Z"
+ },
+ {
+  "description": "The AI-first developer portal is built around Backstage as the foundational platform, enhanced with multiple AI-powered components, observability tools, and responsible AI guardrails. The architecture emphasizes local deployment for privacy and cost control while maintaining enterprise-grade security and compliance.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/ai-developer-portal",
+  "language": null,
+  "name": "ai-developer-portal",
+  "stargazers_count": 0,
+  "updated_at": "2026-06-09T07:12:26Z"
+ },
+ {
+  "description": null,
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/claudecode-responsible-ai",
+  "language": "Python",
+  "name": "claudecode-responsible-ai",
+  "stargazers_count": 1,
+  "updated_at": "2026-06-09T07:12:23Z"
+ },
+ {
+  "description": "Enterprise-grade anomaly detection and automated threat resolution framework for SaaS platforms",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/sentinelshield",
+  "language": "Python",
+  "name": "sentinelshield",
+  "stargazers_count": 1,
+  "updated_at": "2026-06-09T07:12:20Z"
+ },
+ {
+  "description": "One extension, every AI model. Intelligent routing, cost tracking, and seamless multi-provider AI coding — without vendor lock-in.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/code-bridge",
+  "language": "TypeScript",
+  "name": "code-bridge",
+  "stargazers_count": 1,
+  "updated_at": "2026-06-09T07:12:16Z"
+ },
+ {
+  "description": "AI-Powered Pipeline Intelligence for Jenkins — 8 specialized AI analyzers: code review, vulnerability scanning, architecture drift, test gaps, dependency risk, commit intelligence, pipeline optimization & release readiness. Supports OpenAI, Claude, Ollama.",
+  "fork": false,
+  "forks_count": 3,
+  "html_url": "https://github.com/saurabh-oss/forgeai-pipeline-intelligence",
+  "language": "Java",
+  "name": "forgeai-pipeline-intelligence",
+  "stargazers_count": 1,
+  "updated_at": "2026-06-09T07:12:01Z"
+ },
+ {
+  "description": "Rate-limited JSON API on Cloudflare Workers using D1 + KV + Cache API — Deploy to Cloudflare template",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cf-workers-d1-kv-rate-limit-api",
+  "language": "TypeScript",
+  "name": "cf-workers-d1-kv-rate-limit-api",
+  "stargazers_count": 0,
+  "updated_at": "2026-06-02T20:18:20Z"
+ },
+ {
+  "description": "Stateful AI chat on Cloudflare Workers using Workers AI + Durable Objects + D1 — Deploy to Cloudflare template",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cf-workers-ai-do-chat",
+  "language": "TypeScript",
+  "name": "cf-workers-ai-do-chat",
+  "stargazers_count": 0,
+  "updated_at": "2026-06-02T20:18:07Z"
+ },
+ {
+  "description": "Multi-Worker monorepo on Cloudflare Workers sharing D1 + KV bindings — Deploy to Cloudflare template",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cf-workers-monorepo-shared-bindings",
+  "language": "TypeScript",
+  "name": "cf-workers-monorepo-shared-bindings",
+  "stargazers_count": 0,
+  "updated_at": "2026-06-02T20:18:00Z"
+ },
+ {
+  "description": "AI-powered employee experience chatbot PoC built on Snowflake Cortex Search, Cortex Analyst, and Cortex COMPLETE. NL → HR data, leave, IT tickets, team analytics. FastAPI + React.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/snowflake-employee-experience-chatbot",
+  "language": "JavaScript",
+  "name": "snowflake-employee-experience-chatbot",
+  "stargazers_count": 1,
+  "updated_at": "2026-05-16T22:34:17Z"
+ },
+ {
+  "description": "LangGraph agent with intentional failure modes - monitored by TraceGuard AI. Generates real LangSmith traces for autonomous classification, patching, and eval synthesis.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/traceguard-demo-agent",
+  "language": "Python",
+  "name": "traceguard-demo-agent",
+  "stargazers_count": 0,
+  "updated_at": "2026-05-15T06:30:04Z"
+ },
+ {
+  "description": "AEP schema drift detection, identity graph health & ingestion anomaly monitoring, MCP-native agent for Adobe Experience Platform",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/aep-datasentinel",
+  "language": "Python",
+  "name": "aep-datasentinel",
+  "stargazers_count": 0,
+  "updated_at": "2026-05-13T20:36:56Z"
+ },
+ {
+  "description": "Web application for an online shop using ReactJS and Microservices based backend integrations.",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/handykart",
+  "language": "JavaScript",
+  "name": "handykart",
+  "stargazers_count": 0,
+  "updated_at": "2026-04-23T19:46:24Z"
+ },
+ {
+  "description": "This project is intended to deploy Botpress chatbot on Heroku cloud using docker image.",
+  "fork": false,
+  "forks_count": 1,
+  "html_url": "https://github.com/saurabh-oss/botpress-heroku",
+  "language": "Dockerfile",
+  "name": "botpress-heroku",
+  "stargazers_count": 3,
+  "updated_at": "2026-04-23T19:46:17Z"
+ },
+ {
+  "description": "Public repository for Agent Skills",
+  "fork": true,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/skills",
+  "language": null,
+  "name": "skills",
+  "stargazers_count": 1,
+  "updated_at": "2026-04-23T14:56:03Z"
+ },
+ {
+  "description": "Artifactory permissions synchronization tool and data set",
+  "fork": true,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/repository-permissions-updater",
+  "language": null,
+  "name": "repository-permissions-updater",
+  "stargazers_count": 0,
+  "updated_at": "2026-04-16T09:11:04Z"
+ },
+ {
+  "description": "AI-Governed SDLC proof of concept - Jenkins CI/CD with AI guardrails, CrewAI agents, secret scanning, SAST, and Grafana observability running locally on Docker, especially for a scenario where Developers are using Claude Code and Cursor for coding",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/ai-sdlc-poc",
+  "language": "Python",
+  "name": "ai-sdlc-poc",
+  "stargazers_count": 1,
+  "updated_at": "2026-04-05T22:50:53Z"
+ },
+ {
+  "description": "AI agent for analyzing annual reports of public companies to understand performance, strategy, roadmap, challenges and opportunities",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/ai-agent-annual-report-analyzer",
+  "language": null,
+  "name": "ai-agent-annual-report-analyzer",
+  "stargazers_count": 0,
+  "updated_at": "2025-08-23T17:36:30Z"
+ },
+ {
+  "description": null,
+  "fork": true,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/cloud-foundation-training",
+  "language": null,
+  "name": "cloud-foundation-training",
+  "stargazers_count": 0,
+  "updated_at": "2022-08-13T01:59:24Z"
+ },
+ {
+  "description": "A collection of tutorials for Botpress customization",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/botpress-tutorials",
+  "language": "JavaScript",
+  "name": "botpress-tutorials",
+  "stargazers_count": 0,
+  "updated_at": "2022-07-24T09:38:00Z"
+ },
+ {
+  "description": "This is the Cart service for the handy kart application",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/hackathonKart",
+  "language": null,
+  "name": "hackathonKart",
+  "stargazers_count": 0,
+  "updated_at": "2022-07-24T09:23:09Z"
+ },
+ {
+  "description": "Repository for Alfresco customization related code",
+  "fork": false,
+  "forks_count": 0,
+  "html_url": "https://github.com/saurabh-oss/alfresco-customization",
+  "language": "Java",
+  "name": "alfresco-customization",
+  "stargazers_count": 0,
+  "updated_at": "2016-04-08T15:50:51Z"
+ }
+]
