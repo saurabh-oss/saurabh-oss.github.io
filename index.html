@@ -431,12 +431,15 @@ section {
 .btn .arrow { transition: transform 0.3s; }
 .btn:hover .arrow { transform: translateX(4px); }
 
-/* Hero figure: the living blueprint */
-.hero-figure { position: relative; }
+/* Hero figure: a live 3D architecture stack, built by buildStack() */
+.hero-figure {
+  position: relative;
+  container-type: inline-size;
+}
 .hero-figure::before {
   content: '';
   position: absolute;
-  inset: 8% 0 8% -6%;
+  inset: 4% 0 14% -6%;
   background: radial-gradient(closest-side, rgba(212,165,116,0.16), transparent);
   filter: blur(30px);
   animation: breathe 7s ease-in-out infinite;
@@ -446,112 +449,254 @@ section {
   0%, 100% { opacity: 0.6; transform: scale(0.96); }
   50% { opacity: 1; transform: scale(1.04); }
 }
-.bp-tilt {
+.stack {
+  --s: clamp(170px, 42cqi, 250px);   /* side of one layer */
+  --gap: calc(var(--s) * 0.34);      /* distance between layers; JS widens it on scroll */
+  --cx: 30%;                         /* horizontal centre of the stack */
+  --persp: 1800px;
   position: relative;
-  transform: perspective(1100px) rotateX(calc(var(--ty, 0) * 1deg)) rotateY(calc(var(--tx, 0) * 1deg));
-  transition: transform 0.5s ease-out;
+  height: calc(var(--s) * 1.9);
+  perspective: var(--persp);
+  perspective-origin: var(--cx) 35%;
 }
-#blueprint {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  animation: bpFloat 8s ease-in-out infinite;
+.stack-scene {
+  position: absolute;
+  left: var(--cx);
+  top: 50%;
+  width: var(--s);
+  height: var(--s);
+  margin: calc(var(--s) / -2) 0 0 calc(var(--s) / -2);
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx, 58deg)) rotateZ(var(--rz, 45deg));
 }
-@keyframes bpFloat {
-  0%, 100% { transform: translateY(-5px); }
-  50% { transform: translateY(5px); }
+.plane, .plane-face, .side, .node, .link, .pulse { position: absolute; }
+.plane {
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(calc((1.5 - var(--l)) * var(--gap)));
+  /* Layers drop into place, bottom first */
+  animation: planeIn 1.4s var(--ease) calc(0.3s + (3 - var(--l)) * 0.16s) backwards;
 }
-.bp-plane {
-  fill: #191713;
-  fill-opacity: 0;
-  stroke: var(--accent);
-  stroke-width: 1;
-  stroke-opacity: 0.55;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: fill 0.4s;
-  animation:
-    bpDraw 1.4s cubic-bezier(0.65, 0, 0.35, 1) var(--d) forwards,
-    bpGlow 9s ease-in-out calc(2.6s + var(--l) * 0.9s) infinite;
+@keyframes planeIn {
+  from { transform: translateZ(calc((1.5 - var(--l)) * var(--gap) + 260px)); opacity: 0; }
 }
-@keyframes bpDraw {
-  to { stroke-dashoffset: 0; fill-opacity: 0.76; }
+.plane-face {
+  inset: 0;
+  background:
+    linear-gradient(rgba(212,165,116,0.12) 1px, transparent 1px) 0 0 / 25% 25%,
+    linear-gradient(90deg, rgba(212,165,116,0.12) 1px, transparent 1px) 0 0 / 25% 25%,
+    rgba(25, 23, 19, 0.84);
+  border: 1px solid rgba(212,165,116,0.5);
+  transition: background-color 0.4s;
+  animation: faceGlow 9s ease-in-out calc(2.8s + var(--l) * 0.9s) infinite;
 }
-@keyframes bpGlow {
-  0%, 20%, 100% { stroke-opacity: 0.55; }
-  9% { stroke-opacity: 1; }
+@keyframes faceGlow {
+  0%, 20%, 100% { border-color: rgba(212,165,116,0.5); box-shadow: none; }
+  9% { border-color: rgba(232,183,101,1); box-shadow: 0 0 26px rgba(212,165,116,0.28); }
 }
-.bp-side, .bp-grid, .bp-node, .bp-links, .bp-label, .bp-caption {
+.plane.hot .plane-face { background-color: rgba(50, 42, 30, 0.94); }
+/* Slab edges; the browser hides whichever ones face away */
+.side {
+  --t: 6px;
+  backface-visibility: hidden;
+}
+.side-s { left: 0; top: 100%; width: 100%; height: var(--t); transform-origin: 0 0; transform: rotateX(-90deg);
+  background: linear-gradient(rgba(212,165,116,0.3), rgba(212,165,116,0.05)); }
+.side-n { left: 0; top: calc(-1 * var(--t)); width: 100%; height: var(--t); transform-origin: 0 100%; transform: rotateX(90deg);
+  background: linear-gradient(to top, rgba(212,165,116,0.3), rgba(212,165,116,0.05)); }
+.side-e { left: 100%; top: 0; width: var(--t); height: 100%; transform-origin: 0 0; transform: rotateY(90deg);
+  background: linear-gradient(90deg, rgba(212,165,116,0.3), rgba(212,165,116,0.05)); }
+.side-w { left: calc(-1 * var(--t)); top: 0; width: var(--t); height: 100%; transform-origin: 100% 0; transform: rotateY(-90deg);
+  background: linear-gradient(-90deg, rgba(212,165,116,0.3), rgba(212,165,116,0.05)); }
+.node {
+  left: calc((var(--u) + 1) * 50%);
+  top: calc((var(--v) + 1) * 50%);
+  width: 7px; height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 10px rgba(232,183,101,0.8);
+  transform: translateZ(1px);
+}
+.node::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
   opacity: 0;
-  animation: bpFade 0.9s ease calc(var(--d, 0.3s) + 0.7s) forwards;
+  animation: ping 3.8s ease-out var(--pd) infinite;
 }
-@keyframes bpFade {
-  to { opacity: 1; }
-}
-.bp-side { fill: rgba(212,165,116,0.08); stroke: var(--accent); stroke-opacity: 0.3; }
-.bp-grid { stroke: var(--accent); stroke-opacity: 0.13; }
-.bp-node { fill: var(--accent-2); }
-.bp-halo {
-  fill: none;
-  stroke: var(--accent);
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: bpPing 3.8s ease-out var(--pd) infinite;
-}
-@keyframes bpPing {
+@keyframes ping {
   0% { opacity: 0.9; transform: scale(0.6); }
-  70%, 100% { opacity: 0; transform: scale(2.4); }
+  70%, 100% { opacity: 0; transform: scale(2.6); }
 }
-.bp-link { stroke: var(--accent); stroke-opacity: 0.5; stroke-dasharray: 2 4; }
-.bp-pulse circle { fill: var(--accent-2); }
-.bp-pulse .bp-pulse-glow { fill: var(--accent); opacity: 0.25; }
-.bp-leader { stroke: var(--dim); stroke-opacity: 0.6; }
-.bp-name, .bp-sub, .bp-caption { font-family: var(--mono); }
-.bp-name { font-size: 13px; letter-spacing: 0.16em; fill: var(--text); transition: fill 0.3s; }
-.bp-sub { font-size: 11px; letter-spacing: 0.04em; fill: var(--muted); }
-.bp-caption { font-size: 10.5px; letter-spacing: 0.2em; fill: var(--dim); }
-.bp-layer:hover .bp-plane { fill: #2c251b; }
-/* Phones swap the in-figure labels for this legend */
-.bp-legend { display: none; }
-.bp-layer:hover .bp-name { fill: var(--accent); }
-
-.scroll-hint {
-  grid-column: 1 / -1;
+/* Vertical links between layers: two crossed strips, so they stay visible as the stack turns */
+.link {
+  left: calc((var(--u) + 1) * 50%);
+  top: calc((var(--v) + 1) * 50%);
+  width: 1px;
+  height: var(--gap);
+  margin-left: -0.5px;
+  transform-origin: 50% 0;
+  transform: translateZ(calc((1.5 - var(--l)) * var(--gap))) rotateZ(var(--a)) rotateX(90deg);
+  background: repeating-linear-gradient(to bottom, rgba(212,165,116,0.7) 0 2px, transparent 2px 6px);
+  animation: fadeIn 0.9s ease 1.7s backwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+}
+.pulse {
+  left: 0; top: 0;
+  width: 12px; height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff4de 0 18%, var(--accent-2) 30%, rgba(232,183,101,0) 70%);
+  opacity: 0;
+}
+.stack-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.stack-label {
+  position: absolute;
+  top: 0;
+  left: calc(var(--cx) + var(--s) * 0.72 + 1rem);
+  display: grid;
+  gap: 0.2rem;
+  margin-top: -1.1rem;
+  padding-left: 2.25rem;
+  font-family: var(--mono);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: default;
+  animation: fadeIn 0.9s ease 1.9s backwards;
+}
+.stack-label::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0.62rem;
+  width: 1.5rem; height: 1px;
+  background: var(--dim);
+  transition: background 0.3s, width 0.3s;
+}
+.stack-name { font-size: 0.8rem; letter-spacing: 0.16em; color: var(--text); transition: color 0.3s; }
+.stack-sub { font-size: 0.72rem; letter-spacing: 0.03em; color: var(--muted); }
+.stack-label.hot .stack-name { color: var(--accent); }
+.stack-label.hot::before { background: var(--accent); width: 1.85rem; }
+.stack-caption {
   font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--dim);
+  padding-left: 4%;
+  animation: fadeIn 0.9s ease 2s backwards;
+}
+/* Narrow figures swap the side labels for a legend underneath */
+.bp-legend { display: none; }
+@container (max-width: 539px) {
+  .stack { --cx: 50%; }
+  .stack-labels { display: none; }
+  .stack-caption { display: none; }
+  .bp-legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1rem;
+    list-style: none;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .bp-legend span { color: var(--accent); margin-right: 0.5rem; }
+}
+
+/* Official listings: a looping ribbon of registry logos */
+.registry {
+  grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
+  gap: 1.5rem;
+  min-width: 0;
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line-soft);
 }
-.scroll-hint .line {
-  width: 60px; height: 1px;
-  background: var(--dim);
-  position: relative;
+.registry-label {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.registry-viewport {
+  flex: 1;
+  min-width: 0;
+}
+.registry-track {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 0.75rem;
+  list-style: none;
+}
+.registry-track li { padding-right: 0.75rem; }
+.registry.is-looping .registry-viewport {
   overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
-.scroll-hint .line::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  animation: scrollLine 2.5s ease-in-out infinite;
+.registry.is-looping .registry-track {
+  flex-wrap: nowrap;
+  width: max-content;
+  animation: marquee var(--dur, 40s) linear infinite;
 }
-@keyframes scrollLine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.registry.is-looping:hover .registry-track,
+.registry.is-looping:focus-within .registry-track { animation-play-state: paused; }
+@keyframes marquee {
+  to { transform: translateX(-50%); }
 }
+.registry-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid var(--line);
+  background: rgba(19, 18, 16, 0.6);
+  perspective: 400px;
+  transition: border-color 0.3s, background 0.3s;
+}
+.registry-item svg {
+  width: 26px; height: 26px;
+  flex: none;
+  fill: var(--muted);
+  transition: fill 0.3s, transform 0.8s var(--ease);
+}
+.registry-text { display: grid; line-height: 1.35; white-space: nowrap; }
+.registry-text strong {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.registry-text span { font-size: 0.85rem; color: var(--muted); }
+.registry-item:hover, .registry-item:focus-visible { border-color: var(--accent); background: var(--surface); }
+/* The logo turns over in 3D on hover */
+.registry-item:hover svg, .registry-item:focus-visible svg { fill: var(--accent); transform: rotateY(360deg); }
 @media (max-width: 960px) {
-  .hero { grid-template-columns: 1fr; row-gap: 3rem; padding-top: 6.5rem; }
-  .hero-figure { width: 100%; max-width: 520px; justify-self: center; }
-}
-@media (max-width: 960px) {
-  .scroll-hint { display: none; }
+  .hero { grid-template-columns: 1fr; row-gap: 2.5rem; padding-top: 6.5rem; }
+  .hero-figure { width: 100%; max-width: 560px; justify-self: center; }
+  /* One column: the listings come straight after the call to action, before the figure */
+  .hero-copy { order: 1; }
+  .registry { order: 2; flex-direction: column; align-items: stretch; gap: 0.9rem; margin-top: 0; }
+  .hero-figure { order: 3; }
+  .registry.is-looping .registry-viewport { margin: 0 calc(-1 * var(--pad)); }
 }
 @media (max-width: 560px) {
   .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; line-height: 1.7; }
@@ -560,20 +705,6 @@ section {
   .hero-avatar { width: 48px; height: 48px; }
   .hero-cta .btn { flex: 1 1 auto; justify-content: center; padding-left: 1rem; padding-right: 1rem; }
   .hero-figure { max-width: 380px; }
-  .bp-label, .bp-caption { display: none; }
-  .bp-legend {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.6rem 1rem;
-    list-style: none;
-    margin-top: 1.5rem;
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .bp-legend span { color: var(--accent); margin-right: 0.5rem; }
 }
 /* Short screens (phones in landscape) */
 @media (max-height: 480px) {
@@ -728,6 +859,13 @@ section {
 .exp-card:hover {
   background: var(--bg-2);
 }
+/* Cards swing down into place in 3D as they reveal */
+.exp-card.reveal {
+  transform: perspective(1100px) rotateX(-28deg);
+  transform-origin: 50% 0;
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease), transform 1.3s var(--ease), background 0.3s;
+}
+.exp-card.reveal.in { transform: perspective(1100px) rotateX(0deg); }
 .exp-card:hover .exp-num {
   color: var(--accent);
 }
@@ -850,7 +988,7 @@ section {
   left: 0;
   margin: 0;
 }
-.vision.pinned .manifesto { margin: 0; gap: 0; }
+.vision.pinned .manifesto { margin: 0; gap: 0; perspective: 1400px; }
 .vision.pinned .manifesto-item {
   grid-area: 1 / 1;
   grid-template-columns: 1fr;
@@ -859,11 +997,13 @@ section {
   padding: 0;
   border: none;
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.45s ease, transform 0.7s var(--ease);
+  /* Statements turn on a drum behind the text: in from below, out over the top */
+  transform-origin: 50% 50% -320px;
+  transform: rotateX(-70deg);
+  transition: opacity 0.5s ease, transform 0.9s var(--ease);
 }
-.vision.pinned .manifesto-item.active { opacity: 1; transform: none; }
-.vision.pinned .manifesto-item.past { transform: translateY(-32px); }
+.vision.pinned .manifesto-item.active { opacity: 1; transform: rotateX(0deg); }
+.vision.pinned .manifesto-item.past { transform: rotateX(70deg); }
 .vision.pinned .manifesto-num { padding-top: 0; }
 .vision.pinned .manifesto-text {
   font-size: clamp(1.9rem, 4.6vw, 4.25rem);
@@ -918,8 +1058,20 @@ section {
   background: var(--bg-2);
   margin-bottom: 1.5rem;
   position: relative;
-  overflow: hidden;
-  transition: border-color 0.4s;
+  transform-style: preserve-3d;
+  transition: border-color 0.4s, transform 0.6s var(--ease);
+}
+/* Cards with data-tilt lean toward the cursor (set by the pointer handler) */
+.tilting {
+  transform: perspective(1400px) rotateX(var(--ty, 0deg)) rotateY(var(--tx, 0deg));
+  transition-duration: 0.15s;
+}
+.plugin-spotlight .plugin-inner { transform-style: preserve-3d; }
+.plugin-spotlight .demo { transition: transform 0.6s var(--ease), box-shadow 0.6s; }
+/* ...and the demo panel lifts off the card */
+.plugin-spotlight.tilting .demo {
+  transform: translateZ(44px);
+  box-shadow: 0 34px 60px -24px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212,165,116,0.25);
 }
 .plugin-spotlight:hover {
   border-color: var(--accent);
@@ -1203,7 +1355,7 @@ section {
     flex: 0 0 82%;
     scroll-snap-align: start;
     opacity: 1;
-    transform: none;
+    translate: none;
   }
   .projects-grid .loading { flex: 1 0 100%; }
 }
@@ -1227,7 +1379,7 @@ section {
 }
 .repo-card:hover {
   border-color: var(--accent);
-  transform: translateY(-4px);
+  translate: 0 -4px;
 }
 .repo-card:hover::before { width: 100%; }
 .repo-head {
@@ -1412,12 +1564,12 @@ footer a:hover { color: var(--accent); }
 /* ============ REVEAL ANIMATIONS ============ */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+  translate: 0 30px;
+  transition: opacity 0.9s var(--ease), translate 0.9s var(--ease);
 }
 .reveal.in {
   opacity: 1;
-  transform: translateY(0);
+  translate: none;
 }
 .reveal-delay-1 { transition-delay: 0.1s; }
 .reveal-delay-2 { transition-delay: 0.2s; }
@@ -1449,8 +1601,8 @@ footer a:hover { color: var(--accent); }
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
-  .reveal { opacity: 1; transform: none; }
-  .bp-halo, .cursor-glow { display: none; }
+  .reveal, .exp-card.reveal { opacity: 1; translate: none; transform: none; }
+  .node::after, .pulse, .cursor-glow { display: none; }
 }
 
 /* Smooth scrollbar */
@@ -1515,16 +1667,42 @@ footer a:hover { color: var(--accent); }
       </a>
     </div>
   </div>
-  <!-- Drawn by buildBlueprint() below -->
+  <!-- Built by buildStack() below -->
   <div class="hero-figure anim anim-2" aria-hidden="true">
-    <div class="bp-tilt" id="bp-tilt">
-      <svg id="blueprint" viewBox="0 0 680 650" fill="none"></svg>
+    <div class="stack" id="stack">
+      <div class="stack-scene" id="stack-scene"></div>
+      <div class="stack-labels" id="stack-labels"></div>
     </div>
+    <p class="stack-caption">Fig. 01 — Reference architecture</p>
     <ol class="bp-legend" id="bp-legend"></ol>
   </div>
-  <div class="scroll-hint anim anim-5">
-    <span class="line"></span>
-    Scroll to explore
+  <!-- Official listings; JS turns this into a looping ribbon -->
+  <div class="registry anim anim-5" id="registry">
+    <p class="registry-label">Published on</p>
+    <div class="registry-viewport">
+      <ul class="registry-track" id="registry-track">
+      <li><a class="registry-item" href="https://plugins.jenkins.io/forgeai-pipeline-intelligence/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.872 24h-.975a3.866 3.866 0 01-.07-.197c-.215-.666-.594-1.49-.692-2.154-.146-.984.78-1.039 1.374-1.465.915-.66 1.635-1.025 2.627-1.62.295-.179 1.182-.624 1.281-.829.201-.408-.345-.982-.49-1.3-.225-.507-.345-.937-.376-1.435-.824-.13-1.455-.627-1.844-1.185-.63-.925-1.066-2.635-.525-3.936.045-.103.254-.305.285-.463.06-.308-.105-.72-.12-1.048-.06-1.692.284-3.15 1.425-3.66.463-1.84 2.113-2.453 3.673-3.367.58-.342 1.224-.562 1.89-.807 2.372-.877 6.027-.712 7.994.783.836.633 2.176 1.97 2.656 2.939 1.262 2.555 1.17 6.825.287 9.934-.12.421-.29 1.032-.533 1.533-.168.35-.689 1.05-.625 1.36.064.314 1.19 1.17 1.432 1.395.434.422 1.26.975 1.324 1.5.07.557-.248 1.336-.41 1.875-.217.721-.436 1.441-.654 2.131H2.87zm11.104-3.54c-.545-.3-1.361-.622-2.065-.757-.87-.164-.78 1.188-.75 1.994.03.643.36 1.316.51 1.744.076.197.09.41.256.449.3.068 1.29-.326 1.575-.479.6-.328 1.064-.844 1.574-1.189.016-.17.016-.34.03-.508a2.648 2.648 0 00-1.095-.277c.314-.15.75-.15 1.035-.332l.016-.193c-.496-.03-.69-.254-1.021-.436zm7.454 2.935a17.78 17.78 0 00.465-1.752c.06-.287.215-.918.178-1.176-.059-.459-.684-.799-1.004-1.086-.584-.525-.95-.975-1.56-1.469-.249.375-.78.615-.983.914 1.447-.689 1.71 2.625 1.141 3.69.09.329.391.45.514.735l-.086.166h1.29c.013 0 .03 0 .044.014zm-6.634-.012c-.05-.074-.1-.135-.15-.209l-.301.195h.45zm2.77 0c.008-.209.018-.404.03-.598-.53.029-.825-.48-1.196-.527-.324-.045-.6.361-1.02.195-.095.105-.183.227-.284.316.154.18.295.375.424.584h.815c.014-.164.135-.285.3-.285.165 0 .284.121.284.27h.66zm2.116 0c-.314-.479-.947-.898-1.68-.555l-.03.541h1.71zm-8.51 0l-.104-.344c-.225-.72-.36-1.26-.405-1.68-.914-.436-1.875-.87-2.654-1.426-.15-.105-1.109-1.35-1.23-1.305-1.739.676-3.359 1.86-4.814 2.984.256.557.48 1.141.69 1.74h8.505zm8.265-2.113c-.029-.512-.164-1.56-.48-1.74-.66-.39-1.846.78-2.34.943.045.15.135.271.15.48.285-.074.645-.029.898.092-.299.03-.629.03-.824.164-.074.195.016.48-.029.764.69.197 1.5.303 2.385.332.164-.227.225-.645.211-1.082zm-4.08-.36c-.044.375.046.51.12.943 1.26.391 1.034-1.74-.135-.959zM8.76 19.5c-.45.457 1.27 1.082 1.814 1.115 0-.29.165-.564.135-.77-.65-.118-1.502-.042-1.945-.347zm5.565.215c0 .043-.061.03-.068.064.58.451 1.014.545 1.802.51.354-.262.67-.563 1.043-.807-.855.074-1.931.607-2.774.23zm3.42-17.726c-1.606-.906-4.35-1.591-6.076-.731-1.38.692-3.27 1.84-3.899 3.292.6 1.402-.166 2.686-.226 4.109-.018.757.36 1.42.391 2.242-.2.338-.825.38-1.26.356-.146-.729-.4-1.549-1.155-1.63-1.064-.116-1.845.764-1.89 1.683-.06 1.08.833 2.864 2.085 2.745.488-.046.608-.54 1.139-.54.285.57-.445.75-.523 1.154-.016.105.06.511.104.705.233.944.744 2.16 1.245 2.88.635.9 1.884 1.051 3.229 1.141.24-.525 1.125-.48 1.706-.346-.691-.27-1.336-.945-1.875-1.529-.615-.676-1.23-1.41-1.261-2.28 1.155 1.604 2.1 3 4.2 3.704 1.59.525 3.45-.254 4.664-1.109.51-.359.811-.93 1.17-1.439 1.35-1.936 1.98-4.71 1.846-7.394-.06-1.111-.06-2.221-.436-2.955-.389-.781-1.695-1.471-2.475-.781-.15-.764.63-1.23 1.545-.96-.66-.854-1.336-1.858-2.266-2.384zM13.58 14.896c.615 1.544 2.724 1.363 4.505 1.323-.084.194-.256.435-.465.515-.57.232-2.145.408-2.937-.012-.506-.27-.824-.873-1.102-1.227-.137-.172-.795-.608-.012-.609zm.164-.87c.893.464 2.52.517 3.731.48.066.267.066.593.068.913-1.55.08-3.386-.304-3.794-1.395h-.005zm6.675-.586c-.473.9-1.145 1.897-2.539 1.928-.023-.284-.045-.735 0-.904 1.064-.103 1.727-.646 2.543-1.017zm-.649-.667c-1.02.66-2.154 1.375-3.824 1.21-.351-.31-.485-1-.14-1.458.181.313.06.885.57.97.944.165 2.038-.579 2.73-.84.42-.713-.046-.976-.42-1.433-.782-.93-1.83-2.1-1.802-3.51.314-.224.346.346.391.45.404.96 1.424 2.175 2.174 3 .18.21.48.39.51.524.092.39-.254.854-.209 1.11zm-13.439-.675c-.314-.184-.393-.99-.768-1.01-.535-.03-.438 1.05-.436 1.68-.37-.33-.435-1.365-.164-1.89-.308-.15-.445.164-.618.284.22-1.59 2.34-.734 1.99.96zM4.713 5.995c-.685.756-.54 2.174-.459 3.188 1.244-.785 2.898.06 2.883 1.394.595-.016.223-.744.115-1.215-.353-1.528.592-3.187.041-4.59-1.064.084-1.939.52-2.578 1.215zm9.12 1.113c.307.562.404 1.148.84 1.57.195.19.574.424.387.95-.045.121-.365.391-.551.45-.674.195-2.254.03-1.721-.81.563.015 1.314.36 1.732-.045-.314-.524-.885-1.53-.674-2.13zm6.198-.013h.068c.33.668.6 1.375 1.004 1.965-.27.628-2.053 1.19-2.023.057.39-.17 1.05-.035 1.395-.25-.193-.556-.48-1.006-.434-1.771zm-6.927-1.617c-1.422-.33-2.131.592-2.56 1.553-.384-.094-.231-.615-.135-.883.255-.701 1.28-1.633 2.119-1.506.359.057.848.386.576.834zM9.642 1.593c-1.56.44-3.56 1.574-4.2 2.974.495-.07.84-.321 1.33-.351.186-.016.428.074.641.015.424-.104.78-1.065 1.102-1.41.31-.345.685-.496.94-.81.167-.09.409-.074.42-.33-.073-.075-.15-.135-.232-.105v.017z"/></svg>
+        <span class="registry-text"><strong>Jenkins Plugins</strong><span>ForgeAI Pipeline Intelligence</span></span>
+      </a></li>
+      <li><a class="registry-item" href="https://github.com/jenkinsci/forgeai-pipeline-intelligence-plugin" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        <span class="registry-text"><strong>jenkinsci on GitHub</strong><span>Official plugin repository</span></span>
+      </a></li>
+      <li><a class="registry-item" href="https://github.com/marketplace/actions/archilens-architecture-analysis" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.984 13.836a.5.5 0 0 1-.353-.146l-.745-.743a.5.5 0 1 1 .706-.708l.392.391 1.181-1.18a.5.5 0 0 1 .708.707l-1.535 1.533a.504.504 0 0 1-.354.146zm9.353-.147l1.534-1.532a.5.5 0 0 0-.707-.707l-1.181 1.18-.392-.391a.5.5 0 1 0-.706.708l.746.743a.497.497 0 0 0 .706-.001zM4.527 7.452l2.557-1.585A1 1 0 0 0 7.09 4.17L4.533 2.56A1 1 0 0 0 3 3.406v3.196a1.001 1.001 0 0 0 1.527.85zm2.03-2.436L4 6.602V3.406l2.557 1.61zM24 12.5c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3h-2.08a3.503 3.503 0 0 1-3.46 3 3.502 3.502 0 0 1-3.46-3h-.558c-.972 0-1.85-.399-2.482-1.042V17c0 1.654 1.346 3 3 3h.04c.244-1.693 1.7-3 3.46-3 1.93 0 3.5 1.57 3.5 3.5S13.43 24 11.5 24a3.502 3.502 0 0 1-3.46-3H8c-2.206 0-4-1.794-4-4V9.899A5.008 5.008 0 0 1 0 5c0-2.757 2.243-5 5-5s5 2.243 5 5a5.005 5.005 0 0 1-4.952 4.998A2.482 2.482 0 0 0 7.482 12h.558c.244-1.693 1.7-3 3.46-3a3.502 3.502 0 0 1 3.46 3h2.08a3.503 3.503 0 0 1 3.46-3c1.93 0 3.5 1.57 3.5 3.5zm-15 8c0 1.378 1.122 2.5 2.5 2.5s2.5-1.122 2.5-2.5-1.122-2.5-2.5-2.5S9 19.122 9 20.5zM5 9c2.206 0 4-1.794 4-4S7.206 1 5 1 1 2.794 1 5s1.794 4 4 4zm9 3.5c0-1.378-1.122-2.5-2.5-2.5S9 11.122 9 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm9 0c0-1.378-1.122-2.5-2.5-2.5S18 11.122 18 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm-13 8a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm12 0c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3.002c-.007.001-.013.005-.021.005l-.506.017h-.017a.5.5 0 0 1-.016-.999l.506-.017c.018-.002.035.006.052.007A3.503 3.503 0 0 1 20.5 17c1.93 0 3.5 1.57 3.5 3.5zm-1 0c0-1.378-1.122-2.5-2.5-2.5S18 19.122 18 20.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5z"/></svg>
+        <span class="registry-text"><strong>GitHub Marketplace</strong><span>ArchiLens Action</span></span>
+      </a></li>
+      <li><a class="registry-item" href="https://pypi.org/project/archilens/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.922 13.58v3.912L20.55 18.72l-.078.055.052.037 3.45-1.256.026-.036v-3.997l-.053-.036-.025.092z M23.621 5.618l-3.04 1.107v3.912l3.339-1.215V5.509zM23.92 13.457V9.544l-3.336 1.215v3.913zM20.47 14.71V10.8L17.17 12v3.913zM17.034 19.996v-3.912l-3.313 1.206v3.912zM17.17 16.057v3.868l3.314-1.206V14.85l-3.314 1.206zm2.093 1.882c-.367.134-.663-.074-.663-.463s.296-.814.663-.947c.365-.133.662.075.662.464s-.297.814-.662.946z M13.225 9.315l.365-.132-3.285-1.197-3.323 1.21.102.037 3.184 1.16zM20.507 10.664V6.751L17.17 7.965v3.913zM17.058 11.918V8.005l-3.302 1.202v3.912zM13.643 9.246l-3.336 1.215v3.913l3.336-1.215zM6.907 13.165l3.322 1.209v-3.913L6.907 9.252z M10.34 7.873l3.281 1.193V5.198l-3.28-1.193zM20.507 2.715L17.19 3.922v3.913l3.317-1.207zM16.95 3.903L13.724 2.73l-3.269 1.19 3.225 1.174zM15.365 4.606l-1.624.592v3.868l3.317-1.207V3.991l-1.693.615zm-.391 2.778c-.367.134-.662-.074-.662-.464s.295-.813.662-.946c.366-.133.663.074.663.464s-.297.813-.663.946z M10.229 18.41v-3.914l-3.322-1.209V17.2zM13.678 17.182v-3.913l-3.371 1.227v3.913z M13.756 17.154l3.3-1.2V12.04l-3.3 1.2zM13.678 21.217l-3.371 1.227v-3.912h-.078v3.912l-3.322-1.209v-3.913l-.053-.058-.025-.06-3.336-1.21v-3.948l.034.013 3.287 1.196.015-.078-3.261-1.187 3.26-1.187v-.109L3.876 9.62l-.307-.112 3.26-1.188v.877l.079-.055V6.769l3.257 1.185.058-.061L7.084 6.75l-.102-.037 3.24-1.179v-.083L6.854 6.677v.018l-.025.018v1.523L3.44 9.47v.02l-.025.017v4.007l-3.39 1.233v.019L0 14.784v3.995l.025.037 3.4 1.237.008-.006.007.01 3.4 1.238.008-.006.006.01 3.4 1.237.014-.009.012.01 3.45-1.256.026-.037-.078-.027zM3.493 9.563l3.257 1.185-3.257 1.187V9.562zM3.4 19.96L.078 18.752v-3.913l2.361.86.96.349v3.913zm.015-3.99L.335 14.85l-.182-.066 3.262-1.187v2.374zm3.399 5.231l-3.321-1.209v-3.912l3.321 1.209v3.912zM23.791 5.434l-3.21-1.17v2.338zM20.387 2.643l-3.24-1.18-3.27 1.19 3.247 1.182z"/></svg>
+        <span class="registry-text"><strong>PyPI</strong><span>archilens <span data-live="archilens-version">v0.15.1</span></span></span>
+      </a></li>
+      <li><a class="registry-item" href="https://hub.docker.com/r/sauvast/traceguard-ai" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"/></svg>
+        <span class="registry-text"><strong>Docker Hub</strong><span>traceguard-ai · 240+ pulls</span></span>
+      </a></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -1642,21 +1820,27 @@ footer a:hover { color: var(--accent); }
     </div>
   </div>
   <!-- Featured: Jenkins CI Plugin -->
-  <div class="plugin-spotlight reveal" id="spot-forgeai" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-forgeai" data-glow data-tilt="3">
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
           <span class="plugin-badge-dot"></span>
-          Jenkins CI · Official Plugin · jenkinsci org
+          Jenkins Update Center · Official plugin · jenkinsci org
         </div>
         <h3 class="plugin-name">ForgeAI Pipeline <em>Intelligence</em></h3>
         <p class="plugin-tagline">
           Not another ChatGPT wrapper. A purpose-built AI analysis engine embedded directly in Jenkins — 8 specialized analyzers that run inside your CI/CD pipeline and return structured verdicts on every build.
         </p>
         <div class="plugin-cta">
-          <a class="plugin-gh-link" href="https://github.com/jenkinsci/forgeai-pipeline-intelligence-plugin" target="_blank" rel="noopener">
-            View on GitHub
+          <a class="plugin-gh-link" href="https://plugins.jenkins.io/forgeai-pipeline-intelligence/" target="_blank" rel="noopener">
+            Jenkins Plugins
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+          </a>
+          <a class="plugin-gh-link ghost" href="https://github.com/jenkinsci/forgeai-pipeline-intelligence-plugin" target="_blank" rel="noopener">
+            GitHub →
+          </a>
+          <a class="plugin-gh-link ghost" href="https://saurabh-oss.github.io/forgeai-pipeline-intelligence/" target="_blank" rel="noopener">
+            Website →
           </a>
         </div>
         <div class="plugin-specs">
@@ -1671,6 +1855,10 @@ footer a:hover { color: var(--accent); }
           <div class="plugin-spec-item">
             <strong>Stack</strong>
             Java 17+ · Maven · Jenkins 2.528.3+
+          </div>
+          <div class="plugin-spec-item">
+            <strong>Latest</strong>
+            <span data-live="forgeai-release">Release 45 · Oct 2026</span>
           </div>
           <div class="plugin-spec-item">
             <strong>License</strong>
@@ -1703,7 +1891,7 @@ footer a:hover { color: var(--accent); }
   </div>
 
   <!-- Featured: TraceGuard AI -->
-  <div class="plugin-spotlight reveal" id="spot-traceguard" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-traceguard" data-glow data-tilt="3">
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
@@ -1721,6 +1909,9 @@ footer a:hover { color: var(--accent); }
           <a class="plugin-gh-link ghost" href="https://github.com/saurabh-oss/traceguard-ai" target="_blank" rel="noopener">
             GitHub →
           </a>
+          <a class="plugin-gh-link ghost" href="https://saurabh-oss.github.io/traceguard-ai/" target="_blank" rel="noopener">
+            Website →
+          </a>
         </div>
         <div class="plugin-specs">
           <div class="plugin-spec-item">
@@ -1729,7 +1920,7 @@ footer a:hover { color: var(--accent); }
           </div>
           <div class="plugin-spec-item">
             <strong>Distribution</strong>
-            Docker Hub
+            Docker Hub · 240+ pulls
           </div>
           <div class="plugin-spec-item">
             <strong>License</strong>
@@ -1757,19 +1948,22 @@ footer a:hover { color: var(--accent); }
   </div>
 
   <!-- Featured: ArchiLens -->
-  <div class="plugin-spotlight reveal" id="spot-archilens" data-glow>
+  <div class="plugin-spotlight reveal" id="spot-archilens" data-glow data-tilt="3">
     <div class="plugin-inner">
       <div>
         <div class="plugin-badge">
           <span class="plugin-badge-dot"></span>
-          PyPI · archilens · Published
+          PyPI · GitHub Marketplace · <span data-live="archilens-version">v0.15.1</span>
         </div>
         <h3 class="plugin-name">Archi<em>Lens</em></h3>
         <p class="plugin-tagline">
-          Google Maps for codebases. Analyses any Git repository and generates interactive, layered architecture diagrams — from system context down to runtime process flows — and flags architecture drift in CI.
+          Google Maps for codebases. Architecture diagrams from your Git repo, dependency rules checked in CI, and an architecture diff — with an optional AI review — posted on every pull request.
         </p>
         <div class="plugin-cta">
-          <a class="plugin-gh-link" href="https://pypi.org/project/archilens/" target="_blank" rel="noopener">
+          <a class="plugin-gh-link" href="https://github.com/marketplace/actions/archilens-architecture-analysis" target="_blank" rel="noopener">
+            Marketplace ↗
+          </a>
+          <a class="plugin-gh-link ghost" href="https://pypi.org/project/archilens/" target="_blank" rel="noopener">
             PyPI ↗
           </a>
           <a class="plugin-gh-link ghost" href="https://github.com/saurabh-oss/archilens" target="_blank" rel="noopener">
@@ -1781,6 +1975,10 @@ footer a:hover { color: var(--accent); }
         </div>
         <div class="plugin-specs">
           <div class="plugin-spec-item">
+            <strong>Ships as</strong>
+            PyPI package · GitHub Action · MCP server
+          </div>
+          <div class="plugin-spec-item">
             <strong>Analyses</strong>
             Python · Java · JS/TS · Go
           </div>
@@ -1789,8 +1987,8 @@ footer a:hover { color: var(--accent); }
             Mermaid · D2 · PlantUML
           </div>
           <div class="plugin-spec-item">
-            <strong>AI</strong>
-            Optional — runs without API keys
+            <strong>Latest</strong>
+            <span data-live="archilens-version">v0.15.1</span> · <span data-live="archilens-releases">22 releases</span>
           </div>
           <div class="plugin-spec-item">
             <strong>License</strong>
@@ -1798,20 +1996,21 @@ footer a:hover { color: var(--accent); }
           </div>
         </div>
       </div>
+      <!-- The GitHub Action on a pull request -->
       <div class="demo" id="demo-archilens">
         <div class="demo-head demo-cmd">
-          <span class="prompt">$</span>
-          <span class="typed" style="--chars:21"><b>pip install</b> archilens</span>
+          <span class="prompt">-</span>
+          <span class="typed" style="--chars:35"><b>uses:</b> saurabh-oss/archilens@<span data-live="archilens-version">v0.15.1</span></span>
         </div>
-        <ol class="demo-steps" aria-label="The four diagram levels">
-          <li>L0 · System context</li>
-          <li>L1 · Module architecture</li>
-          <li>L2 · Component detail</li>
-          <li>L3 · Process flows</li>
+        <ol class="demo-steps" aria-label="What the action does on a pull request">
+          <li>Map modules &amp; dependencies</li>
+          <li>Diff against the base branch</li>
+          <li>Check architecture rules</li>
+          <li>Post the PR comment</li>
         </ol>
         <div class="demo-foot">
-          Diagrams
-          <span class="verdict-pill verdict-ship" data-verdict>MERMAID</span>
+          Pull request
+          <span class="verdict-pill verdict-ship" data-verdict>RULES PASS</span>
         </div>
       </div>
     </div>
@@ -1928,133 +2127,201 @@ const counter = new IntersectionObserver((entries) => {
 }, { threshold: 0.6 });
 document.querySelectorAll('[data-count]').forEach(el => counter.observe(el));
 
-/* ============ HERO BLUEPRINT ============ */
-// An exploded, isometric reference architecture: four layers, linked by live traffic.
-(function buildBlueprint() {
-  const svg = document.getElementById('blueprint');
-  const NS = 'http://www.w3.org/2000/svg';
-  const el = (tag, attrs, parent) => {
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    (parent || svg).appendChild(n);
-    return n;
-  };
-  const CX = 240, TOP = 115, GAP = 128, W = 100, H = 50, SLAB = 7;
-  // (u, v) in [-1, 1] on a layer's plane → screen position
-  const pt = (u, v, l) => [CX + (u - v) * W, TOP + l * GAP + (u + v) * H];
+/* ============ HERO 3D STACK ============ */
+// A reference architecture as four real 3D layers (CSS transforms), linked by live traffic.
+// It sways on its own, turns toward the cursor, and pulls apart as you scroll past it.
+(function buildStack() {
+  const hero = document.getElementById('top');
+  const stack = document.getElementById('stack');
+  const scene = document.getElementById('stack-scene');
+  const labelsEl = document.getElementById('stack-labels');
   const layers = [
     { name: 'Experience',   sub: 'Web · Apps · Low-code',      nodes: [[-0.5, 0], [0.5, 0], [0, 0]] },
     { name: 'Intelligence', sub: 'Agents · RAG · Evals',       nodes: [[-0.5, 0], [0.5, 0], [-0.5, 0.5], [0, 0], [0.5, -0.5]] },
     { name: 'Services',     sub: 'APIs · Automation',          nodes: [[-0.5, 0.5], [0, 0], [0.5, -0.5], [0, 0.5], [0, -0.5]] },
     { name: 'Platform',     sub: 'CI/CD · Data · Open source', nodes: [[0, 0.5], [0, -0.5], [0, 0]] },
   ];
-  // links[i] joins layer i to the one below it, at these (u, v) points
+  // links[i] joins layer i + 1 to the layer above it, at these (u, v) points
   const links = [
     [[-0.5, 0], [0.5, 0]],
     [[-0.5, 0.5], [0, 0], [0.5, -0.5]],
     [[0, 0.5], [0, -0.5]],
   ];
-  const pulses = [];
+  const planes = [], labels = [], pulses = [];
+  const make = (tag, cls, parent, style) => {
+    const n = document.createElement(tag);
+    n.className = cls;
+    if (style) n.style.cssText = style;
+    parent.appendChild(n);
+    return n;
+  };
 
-  // Bottom layer first, so the upper planes sit over the lower ones
-  for (let l = layers.length - 1; l >= 0; l--) {
-    const delay = (0.3 + (layers.length - 1 - l) * 0.22).toFixed(2) + 's';
-    const g = el('g', { class: 'bp-layer', style: `--d:${delay};--l:${l}` });
-    const [tx, ty] = pt(-1, -1, l), [rx, ry] = pt(1, -1, l), [bx, by] = pt(1, 1, l), [lx, ly] = pt(-1, 1, l);
-    el('path', { class: 'bp-side', d: `M${lx},${ly} L${bx},${by} L${rx},${ry} v${SLAB} L${bx},${by + SLAB} L${lx},${ly + SLAB} Z` }, g);
-    el('path', { class: 'bp-plane', pathLength: 1, d: `M${tx},${ty} L${rx},${ry} L${bx},${by} L${lx},${ly} Z` }, g);
-    [-0.5, 0, 0.5].forEach(t => {
-      const [ax, ay] = pt(t, -1, l), [a2x, a2y] = pt(t, 1, l), [cx, cy] = pt(-1, t, l), [c2x, c2y] = pt(1, t, l);
-      el('line', { class: 'bp-grid', x1: ax, y1: ay, x2: a2x, y2: a2y }, g);
-      el('line', { class: 'bp-grid', x1: cx, y1: cy, x2: c2x, y2: c2y }, g);
+  layers.forEach((layer, l) => {
+    const plane = make('div', 'plane', scene, `--l:${l}`);
+    make('div', 'plane-face', plane);
+    ['n', 'e', 's', 'w'].forEach(d => make('i', 'side side-' + d, plane));
+    layer.nodes.forEach(([u, v], i) => make('b', 'node', plane, `--u:${u};--v:${v};--pd:${(2 + l * 0.6 + i * 0.8).toFixed(1)}s`));
+    const label = make('div', 'stack-label', labelsEl);
+    label.innerHTML = `<span class="stack-name">0${l + 1}&nbsp;&nbsp;${layer.name.toUpperCase()}</span><span class="stack-sub">${layer.sub}</span>`;
+    // Hovering a layer or its label lights both
+    const hot = on => { plane.classList.toggle('hot', on); label.classList.toggle('hot', on); };
+    [plane, label].forEach(n => {
+      n.addEventListener('pointerenter', () => hot(true));
+      n.addEventListener('pointerleave', () => hot(false));
     });
-    layers[l].nodes.forEach(([u, v], i) => {
-      const [x, y] = pt(u, v, l);
-      el('circle', { class: 'bp-halo', cx: x, cy: y, r: 5, style: `--pd:${(2 + l * 0.6 + i * 0.8).toFixed(1)}s` }, g);
-      el('circle', { class: 'bp-node', cx: x, cy: y, r: 2.6 }, g);
-    });
-    const label = el('g', { class: 'bp-label' }, g);
-    el('line', { class: 'bp-leader', x1: rx + 8, y1: ry, x2: rx + 30, y2: ry }, label);
-    el('text', { class: 'bp-name', x: rx + 40, y: ry - 2 }, label).textContent = `0${l + 1}  ${layers[l].name.toUpperCase()}`;
-    el('text', { class: 'bp-sub', x: rx + 40, y: ry + 16 }, label).textContent = layers[l].sub;
-
-    if (l > 0) {
-      const lg = el('g', { class: 'bp-links', style: `--d:${delay}` });
-      links[l - 1].forEach(([u, v]) => {
-        const [x, y1] = pt(u, v, l - 1);
-        el('line', { class: 'bp-link', x1: x, y1, x2: x, y2: y1 + GAP }, lg);
-        const p = el('g', { class: 'bp-pulse', opacity: 0 }, lg);
-        el('circle', { class: 'bp-pulse-glow', r: 6 }, p);
-        el('circle', { r: 2.2 }, p);
-        pulses.push({ node: p, x, y1, y2: y1 + GAP, offset: pulses.length * 0.37 });
-      });
-    }
-  }
-  el('text', { class: 'bp-caption', x: 40, y: 640, style: '--d:1.2s' }).textContent = 'FIG. 01 — REFERENCE ARCHITECTURE';
-
-  // Phones: drop the side labels, crop to the stack itself, and list the layers underneath
-  const legend = document.getElementById('bp-legend');
-  layers.forEach((layer, i) => {
-    const li = document.createElement('li');
-    li.innerHTML = `<span>0${i + 1}</span>${layer.name}`;
-    legend.appendChild(li);
+    planes.push(plane);
+    labels.push(label);
   });
-  const narrow = window.matchMedia('(max-width: 560px)');
-  const fit = () => svg.setAttribute('viewBox', narrow.matches ? '24 0 432 618' : '0 0 680 650');
-  narrow.addEventListener('change', fit);
-  fit();
+  links.forEach((points, i) => {
+    const l = i + 1;
+    points.forEach(([u, v]) => {
+      [0, 90].forEach(a => make('i', 'link', scene, `--u:${u};--v:${v};--l:${l};--a:${a}deg`));
+      pulses.push({ node: make('i', 'pulse', scene), u, v, l, offset: pulses.length * 0.37 });
+    });
+  });
 
-  if (reduceMotion) return;
+  const legend = document.getElementById('bp-legend');
+  layers.forEach((layer, i) => make('li', '', legend).innerHTML = `<span>0${i + 1}</span>${layer.name}`);
 
-  // Traffic between layers — only while the figure is on screen
+  // Sizes come from CSS (container units), so re-read them when the figure resizes
+  let side = 0, height = 0, persp = 1800;
+  new ResizeObserver(() => {
+    side = scene.offsetWidth;
+    height = stack.offsetHeight;
+    persp = parseFloat(getComputedStyle(stack).perspective) || 1800;
+  }).observe(stack);
+
+  // Labels sit level with their layer's projected centre. The centre lies on the scene's axis,
+  // so only the tilt (rx) and the layer gap move it — no layout reads needed.
+  function placeLabels(rx, gap) {
+    const sin = Math.sin(rx * Math.PI / 180), cos = Math.cos(rx * Math.PI / 180), oy = height * 0.35;
+    labels.forEach((label, l) => {
+      const z = (1.5 - l) * gap;
+      const y = oy + (height / 2 - z * sin - oy) * persp / (persp - z * cos);
+      label.style.transform = `translateY(${y.toFixed(1)}px)`;
+    });
+  }
+
+  if (reduceMotion) {
+    requestAnimationFrame(() => placeLabels(58, side * 0.34));
+    new ResizeObserver(() => placeLabels(58, side * 0.34)).observe(stack);
+    return;
+  }
+
+  let tx = 0, ty = 0, ex = 0, ey = 0;
+  if (finePointer) {
+    document.addEventListener('pointermove', e => {
+      tx = e.clientX / innerWidth - 0.5;
+      ty = e.clientY / innerHeight - 0.5;
+    }, { passive: true });
+  }
+
   let raf = 0;
   function frame(now) {
     const t = now / 1000;
+    ex += (tx - ex) * 0.05;
+    ey += (ty - ey) * 0.05;
+    const hr = hero.getBoundingClientRect();
+    const out = clamp(-hr.top / (hr.height * 0.7), 0, 1);   // 0 at rest, 1 once the hero has scrolled away
+    const gap = side * 0.34 * (1 + out * 0.7);
+    const rz = 45 + Math.sin(t * 0.32) * 9 + ex * 22 + out * 30;
+    const rx = 58 - ey * 10 - out * 6;
+    scene.style.setProperty('--gap', gap.toFixed(1) + 'px');
+    scene.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+    scene.style.setProperty('--rz', rz.toFixed(2) + 'deg');
+
+    // Traffic between layers; each pulse faces the viewer
     pulses.forEach((p, i) => {
       const k = (t * 0.42 + p.offset) % 2.4;          // travels during the first 1.0 of each cycle
-      if (k > 1) { p.node.setAttribute('opacity', 0); return; }
+      if (k > 1) { p.node.style.opacity = 0; return; }
       const eased = k * k * (3 - 2 * k);
       const pos = i % 2 ? 1 - eased : eased;            // alternate up and down
-      p.node.setAttribute('transform', `translate(${p.x},${(p.y1 + (p.y2 - p.y1) * pos).toFixed(1)})`);
-      p.node.setAttribute('opacity', Math.sin(Math.PI * k).toFixed(2));
+      const x = (p.u + 1) / 2 * side, y = (p.v + 1) / 2 * side, z = (1.5 - p.l) * gap + gap * pos;
+      p.node.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,${z.toFixed(1)}px) rotateZ(${-rz}deg) rotateX(${-rx}deg)`;
+      p.node.style.opacity = Math.sin(Math.PI * k).toFixed(2);
     });
+    placeLabels(rx, gap);
     raf = requestAnimationFrame(frame);
   }
   new IntersectionObserver(([e]) => {
     cancelAnimationFrame(raf);
     if (e.isIntersecting) raf = requestAnimationFrame(frame);
-  }).observe(svg);
+  }).observe(stack);
 })();
+
+/* ============ REGISTRY RIBBON ============ */
+// One copy of the listings is enough without motion; with it, a second copy makes the loop seamless
+(function () {
+  if (reduceMotion) return;
+  const band = document.getElementById('registry');
+  const track = document.getElementById('registry-track');
+  const items = [...track.children];
+  items.forEach(li => {
+    const copy = li.cloneNode(true);
+    copy.setAttribute('aria-hidden', 'true');
+    copy.querySelector('a').tabIndex = -1;
+    track.appendChild(copy);
+  });
+  track.style.setProperty('--dur', items.length * 7 + 's');
+  band.classList.add('is-looping');
+})();
+
+/* ============ LIVE REGISTRY DATA ============ */
+// Versions are read from the registries, so the page keeps up with new releases on its own
+const setLive = (key, text) => document.querySelectorAll(`[data-live="${key}"]`).forEach(el => { el.textContent = text; });
+fetch('https://pypi.org/pypi/archilens/json')
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(d => {
+    setLive('archilens-version', 'v' + d.info.version);
+    setLive('archilens-releases', Object.keys(d.releases).length + ' releases');
+  })
+  .catch(() => {});
+fetch('https://api.github.com/repos/jenkinsci/forgeai-pipeline-intelligence-plugin/releases/latest')
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(d => {
+    const when = new Date(d.published_at).toLocaleDateString('en', { month: 'short', year: 'numeric' });
+    setLive('forgeai-release', `Release ${d.tag_name.split('.')[0]} · ${when}`);
+  })
+  .catch(() => {});
 
 /* ============ POINTER EFFECTS ============ */
 if (finePointer && !reduceMotion) {
   const glow = document.getElementById('cursor-glow');
-  const hero = document.getElementById('top');
-  const tilt = document.getElementById('bp-tilt');
-  let px = 0, py = 0, target = null, queued = false;
+  let px = 0, py = 0, target = null, queued = false, tilted = null;
   function applyPointer() {
     queued = false;
     glow.style.transform = `translate3d(${px}px, ${py}px, 0)`;
     glow.classList.add('on');
+    const closest = sel => (target && target.closest ? target.closest(sel) : null);
     // Light the card under the cursor
-    const card = target && target.closest && target.closest('[data-glow]');
+    const card = closest('[data-glow]');
     if (card) {
       const r = card.getBoundingClientRect();
       card.style.setProperty('--gx', (px - r.left) + 'px');
       card.style.setProperty('--gy', (py - r.top) + 'px');
     }
-    // Tilt the blueprint toward the cursor while it is over the hero
-    const hr = hero.getBoundingClientRect();
-    if (py < hr.bottom) {
-      tilt.style.setProperty('--tx', (((px - hr.left) / hr.width - 0.5) * 10).toFixed(2));
-      tilt.style.setProperty('--ty', (((py - hr.top) / hr.height - 0.5) * -8).toFixed(2));
+    // Lean the card under the cursor toward it, in 3D (data-tilt = maximum angle in degrees)
+    const tilt = closest('[data-tilt]');
+    if (tilt !== tilted) {
+      if (tilted) tilted.classList.remove('tilting');
+      if (tilt) tilt.classList.add('tilting');
+      tilted = tilt;
+    }
+    if (tilt) {
+      const r = tilt.getBoundingClientRect(), max = +tilt.dataset.tilt || 4;
+      tilt.style.setProperty('--tx', (((px - r.left) / r.width - 0.5) * 2 * max).toFixed(2) + 'deg');
+      tilt.style.setProperty('--ty', (((py - r.top) / r.height - 0.5) * -2 * max).toFixed(2) + 'deg');
     }
   }
   document.addEventListener('pointermove', e => {
     px = e.clientX; py = e.clientY; target = e.target;
     if (!queued) { queued = true; requestAnimationFrame(applyPointer); }
   }, { passive: true });
-  document.documentElement.addEventListener('pointerleave', () => glow.classList.remove('on'));
+  document.documentElement.addEventListener('pointerleave', () => {
+    glow.classList.remove('on');
+    if (tilted) tilted.classList.remove('tilting');
+    tilted = null;
+  });
 }
 
 /* ============ PINNED MANIFESTO + SCROLL PROGRESS ============ */
@@ -2146,7 +2413,11 @@ function runDemo(el, scenarios, stepMs) {
     const flags = sc.flags || {};
     steps.forEach(li => li.dataset.state = 'pending');
     setVerdict('···');
-    if (typed) { el.classList.remove('typing'); void el.offsetWidth; el.classList.add('typing'); }
+    if (typed) {
+      // The command may carry a live version number, so size the typing to the current text
+      typed.style.setProperty('--chars', typed.textContent.trim().length);
+      el.classList.remove('typing'); void el.offsetWidth; el.classList.add('typing');
+    }
     let i = 0;
     const next = () => {
       if (!visible) { timer = null; return; }
@@ -2169,15 +2440,16 @@ function runDemo(el, scenarios, stepMs) {
 runDemo(document.getElementById('demo-forge'), [
   { verdict: 'SHIP_IT', cls: 'verdict-ship' },
   { verdict: 'CAUTION', cls: 'verdict-hold',  flags: { 3: 'warn' } },
+  { verdict: 'HOLD',    cls: 'verdict-hold',  flags: { 4: 'warn', 5: 'warn' } },
   { verdict: 'BLOCK',   cls: 'verdict-block', flags: { 1: 'fail' } },
 ], 420);
 runDemo(document.getElementById('demo-trace'), [
   { verdict: 'READY', cls: 'verdict-ship' },
 ], 850);
 runDemo(document.getElementById('demo-archilens'), [
-  { verdict: 'MERMAID',  cls: 'verdict-ship' },
-  { verdict: 'D2',       cls: 'verdict-ship' },
-  { verdict: 'PLANTUML', cls: 'verdict-ship' },
+  { verdict: 'RULES PASS',    cls: 'verdict-ship' },
+  { verdict: '+2 MODULES',    cls: 'verdict-hold',  flags: { 1: 'warn' } },
+  { verdict: 'NEW VIOLATION', cls: 'verdict-block', flags: { 2: 'fail' } },
 ], 850);
 
 /* ============ GITHUB REPOS ============ */
@@ -2208,7 +2480,7 @@ function repoCard(r, i) {
   const lang = r.language || 'Mixed';
   const langColor = langColors[r.language] || '#d4a574';
   return `
-    <a class="repo-card reveal reveal-delay-${i}" data-glow href="${r.html_url}" target="_blank" rel="noopener">
+    <a class="repo-card reveal reveal-delay-${i}" data-glow data-tilt="6" href="${r.html_url}" target="_blank" rel="noopener">
       <div class="repo-head">
         <div class="repo-name">${escapeHtml(r.name)}</div>
         <svg class="repo-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

@@ -32,9 +32,13 @@ Build a personal "publishing surface" that turns **16 years of architecture expe
                                 │ fetch on load
                                 ▼
                      ┌──────────────────────┐
-                     │   GitHub REST API     │  ← live repo data
-                     │ /users/saurabh-oss/   │     (no auth needed,
+                     │   GitHub REST API     │  ← live repo data + ForgeAI's
+                     │ /users/saurabh-oss/   │     latest release (no auth,
                      │       repos           │      60 req/hr/IP)
+                     └──────────────────────┘
+                     ┌──────────────────────┐
+                     │   PyPI JSON API       │  ← ArchiLens version and
+                     │ /pypi/archilens/json  │     release count
                      └──────────────────────┘
 ```
 
@@ -43,7 +47,7 @@ Build a personal "publishing surface" that turns **16 years of architecture expe
 - Vanilla JS (no framework, no build step)
 - Google Fonts (Fraunces serif + DM Sans + JetBrains Mono)
 - GitHub Pages (free static hosting)
-- GitHub REST API (live project data, no key required)
+- GitHub REST API and PyPI JSON API (live project data and versions, no key required)
 
 **Why no framework?**
 - Zero build step → push and ship.
@@ -167,7 +171,9 @@ All content lives in `index.html`. Open it and search for these markers:
 | **Photo** | Replace `portrait.jpg` (4:5) and `portrait-avatar.jpg` (square face crop) — same filenames, no code change |
 | **Hero headline** | `<h1 class="hero-title">` — one `<span class="w">` per word, numbered with `--i` for the staggered reveal |
 | **One-line positioning** | `<p class="hero-sub">` |
-| **Hero blueprint** | `layers` array in `buildBlueprint()` — layer names and sub-labels |
+| **Hero 3D stack** | `layers` array in `buildStack()` — layer names, sub-labels and node positions |
+| **"Published on" ribbon** | `<div class="registry">` in the hero — one `<li>` per official listing (logos are [Simple Icons](https://simpleicons.org), CC0) |
+| **Live versions** | Any element with `data-live="archilens-version"`, `"archilens-releases"` or `"forgeai-release"` is filled from the registries on load; the text in the HTML is the fallback |
 | **Bio paragraphs** | `<div class="about-text">` |
 | **Stats numbers** | `<div class="stats">` — set both the text and `data-count` (the repo count updates itself from GitHub) |
 | **Expertise / domains** | `<div class="expertise-grid">` — four `.exp-card` blocks |
@@ -229,14 +235,16 @@ The grid is laid out for four cards; keep the list at four (or eight) so the row
 
 ## 🎞️ Motion
 
-All animation is plain CSS, SVG and a little vanilla JS — no libraries.
+All animation is plain CSS (including the 3D, via `transform-style: preserve-3d`), SVG and a little vanilla JS — no libraries, no WebGL.
 
-- **Hero blueprint** — an isometric SVG built by `buildBlueprint()`; it draws itself in, carries pulses between layers, and tilts toward the cursor.
-- **Manifesto** — pinned while you scroll; one statement at a time, lit word by word (`updateManifesto()`).
-- **Project panels** — `runDemo()` steps through each analyzer and lands a verdict, only while the panel is on screen.
+- **Hero 3D stack** — four real 3D layers built by `buildStack()`. They drop into place on load, sway slowly, turn toward the cursor, carry pulses between layers, and pull apart as you scroll past.
+- **"Published on" ribbon** — the official listings loop as a marquee (paused on hover); each logo turns over in 3D on hover.
+- **Manifesto** — pinned while you scroll; statements turn on a 3D drum, lit word by word (`updateManifesto()`).
+- **Project highlights** — cards with `data-tilt` lean toward the cursor and the demo panel lifts off the card; `runDemo()` steps through each panel and lands a verdict, only while it is on screen.
+- **Domain cards** — swing down into place in 3D as they reveal.
 - **Small touches** — stat count-up, scroll-progress hairline, active nav link, cursor glow on cards.
 
-Visitors with **"reduce motion"** enabled in their OS get the static version: no pinning, no pulses, everything in its final state.
+Visitors with **"reduce motion"** enabled in their OS get the static version: no pinning, no pulses, no tilt, everything in its final state.
 
 ---
 
